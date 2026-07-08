@@ -1,97 +1,87 @@
-const chapters = [
-  {
-    kicker: '01 / Morning',
-    title: 'Lake light, linen, silence.',
-    copy: 'Главная не продает с первого касания. Она вводит в состояние: утро, воздух, ткань, уверенность без жеста.',
-  },
-  {
-    kicker: '02 / Tailoring',
-    title: 'Made to move like a shirt.',
-    copy: 'Неаполитанское плечо, мягкая посадка и лёгкая конструкция становятся частью движения, а не витриной статуса.',
-  },
-  {
-    kicker: '03 / Club',
-    title: 'Private, not loud.',
-    copy: 'Бутики, su misura, личные приглашения и сезонные главы Raschini Beyond собраны в одну спокойную цифровую среду.',
-  },
+const cards = [
+  ['Su misura', 'Посадка, которая не спорит с телом', 'atelier'],
+  ['Linen summer', 'Лён, кожа, спокойная архитектура', 'linen'],
+  ['Private boutiques', 'Смоленский Пассаж · Dream House', 'boutique'],
 ];
 
-const collections = ['Linen', 'Su Misura', 'Fragrance'];
+const looks = [
+  ['01', 'Белый лен', 'Для города у воды'],
+  ['02', 'Замша и хлопок', 'Для вечернего движения'],
+  ['03', 'Костюм без усилия', 'Для встреч без пафоса'],
+];
 
 export default function Home() {
   return (
     <main>
-      <header className="siteHeader" aria-label="Main navigation">
-        <button className="menuButton" aria-label="Open menu">Menu</button>
-        <a className="brand" href="#top">RASCHINI</a>
-        <a className="headerLink" href="#contact">Private</a>
+      <header className="topbar">
+        <button>Меню</button>
+        <a className="logo" href="#top">RASCHINI</a>
+        <nav>
+          <a href="#looks">Образы</a>
+          <a href="#visit">Бутики</a>
+        </nav>
       </header>
 
-      <section id="top" className="hero sectionGrid">
-        <div className="heroMedia" aria-hidden="true">
-          <div className="grain" />
-          <div className="figure one" />
-          <div className="figure two" />
+      <section id="top" className="hero">
+        <div className="heroPhoto photoHero" />
+        <div className="heroShade" />
+        <div className="heroText">
+          <p>Весна—лето 26</p>
+          <h1>Портновская классика в современной жизни</h1>
+          <a href="#looks">Смотреть первую прикидку</a>
         </div>
-        <div className="heroCopy">
-          <p className="eyebrow">Raschini Beyond / Summer</p>
-          <h1>Quiet luxury for men who do not need to explain.</h1>
-          <div className="heroMeta">
-            <span>Digital journal</span>
-            <span>Tailoring</span>
-            <span>Moscow</span>
-          </div>
-        </div>
-        <div className="scrollHint">Scroll</div>
       </section>
 
-      <section className="manifesto">
-        <p>Raschini.com как закрытый журнал, а не обычный интернет-магазин. Сначала атмосфера. Потом вещь.</p>
+      <section className="opening">
+        <p>Главная Raschini должна ощущаться не как магазин, а как вход в тихий частный мир: вещи, путешествия, портновская культура и личный сервис.</p>
       </section>
 
-      <section className="editorial sectionGrid">
-        <div className="verticalTitle">Journal</div>
-        <article className="leadCard">
-          <p className="eyebrow">Chapter one</p>
-          <h2>Summer in Como</h2>
-          <p>Один экран, одна сцена, одно настроение. Пользователь движется по сайту как по дорогому печатному альбому.</p>
+      <section className="mosaic">
+        <article className="bigTile photoLake">
+          <span>Raschini journal</span>
+          <h2>Лето у воды</h2>
         </article>
-        <div className="photoStack" aria-hidden="true">
-          <div className="photo tall" />
-          <div className="photo small" />
-        </div>
-      </section>
-
-      <section className="chapters">
-        {chapters.map((chapter) => (
-          <article className="chapter" key={chapter.kicker}>
-            <p>{chapter.kicker}</p>
-            <h3>{chapter.title}</h3>
-            <span>{chapter.copy}</span>
+        {cards.map(([title, text, cls]) => (
+          <article className={`smallTile photo ${cls}`} key={title}>
+            <span>{title}</span>
+            <h3>{text}</h3>
           </article>
         ))}
       </section>
 
-      <section className="collectionPanel">
-        <div>
-          <p className="eyebrow">Selected worlds</p>
-          <h2>Not categories. States.</h2>
+      <section id="looks" className="looks">
+        <div className="sectionHead">
+          <p>Selected looks</p>
+          <h2>Не категории. Состояния.</h2>
         </div>
-        <div className="collectionList">
-          {collections.map((item, index) => (
-            <a href="#contact" key={item}>
-              <span>0{index + 1}</span>
-              {item}
-              <em>Explore</em>
-            </a>
+        <div className="lookGrid">
+          {looks.map(([num, title, text]) => (
+            <article className="look" key={num}>
+              <div className={`lookPhoto look${num}`} />
+              <div>
+                <span>{num}</span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
+            </article>
           ))}
         </div>
       </section>
 
-      <section id="contact" className="finalScreen">
-        <p className="eyebrow">Private appointment</p>
-        <h2>Smolenskiy Passage / Dream House / Arkhangelskoe Outlet</h2>
-        <a href="mailto:client@raschini.com">Request a visit</a>
+      <section className="tailoring">
+        <div className="tailorPhoto" />
+        <div className="tailorText">
+          <p>Индивидуальный заказ</p>
+          <h2>Ваши правила. Наша точность.</h2>
+          <span>Костюм, пиджак или рубашка по меркам — без театральности, с вниманием к посадке и ткани.</span>
+          <a href="#visit">Записаться</a>
+        </div>
+      </section>
+
+      <section id="visit" className="visit">
+        <p>Private appointment</p>
+        <h2>Смоленский Пассаж · Dream House · Архангельское Outlet</h2>
+        <a href="mailto:client@raschini.com">Связаться с нами</a>
       </section>
     </main>
   );
