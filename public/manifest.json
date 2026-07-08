@@ -1,0 +1,10 @@
+{
+  "name": "Raschini",
+  "short_name": "Raschini",
+  "description": "Raschini luxury mobile experience",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0b09",
+  "theme_color": "#0d0b09",
+  "icons": []
+}
