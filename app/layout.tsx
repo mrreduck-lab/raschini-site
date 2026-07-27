@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Manrope } from 'next/font/google';
+import PushPrompt from './components/PushPrompt';
 import './globals.css';
 import './overrides.css';
 import './no-parallax.css';
@@ -40,7 +41,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru" className={`${display.variable} ${sans.variable}`}>
-      <body>{children}</body>
+      <body>{children}<PushPrompt /></body>
     </html>
   );
 }
