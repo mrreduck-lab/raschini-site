@@ -19,9 +19,17 @@ const boutiques = [
 
 function BrandLogo({ footer = false }: { footer?: boolean }) {
   return (
-    <span className={footer ? 'footerBrand brandAsset' : 'brand brandAsset'}>
-      <img src={OFFICIAL_LOGO} alt="Raschini" width="220" height="54" />
-      <span className="brandFallback" aria-hidden="true">RASCHINI</span>
+    <span
+      className={footer ? 'footerBrand' : 'brand'}
+      style={{ display: 'block', width: footer ? '190px' : '172px', lineHeight: 0 }}
+    >
+      <img
+        src={OFFICIAL_LOGO}
+        alt="Raschini"
+        width={220}
+        height={54}
+        style={{ display: 'block', width: '100%', height: 'auto', filter: 'brightness(0) invert(1)' }}
+      />
     </span>
   );
 }
@@ -49,7 +57,7 @@ export default function Home() {
         <nav className="leftNav" aria-label="Основная навигация">
           <a href="#journal">Мир Raschini</a><a href="https://raschini.com/new/">Коллекции</a><a href="#su-misura">Индивидуальный заказ</a><a href="#boutiques">Бутики</a>
         </nav>
-        <a className="brandLink" href="#top" aria-label="Raschini — на главную"><BrandLogo /></a>
+        <a href="#top" aria-label="Raschini — на главную"><BrandLogo /></a>
         <nav className="rightNav" aria-label="Сервисы"><a href="https://raschini.com/?s=">Поиск</a><a href="https://raschini.com/my-account/">Кабинет</a><a href="https://raschini.com/cart/">Корзина</a></nav>
       </header>
 
