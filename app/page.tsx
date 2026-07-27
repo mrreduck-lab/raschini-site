@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+const LOGO_URL = 'https://drive.google.com/thumbnail?id=1z_j_76krs1HNLa_KhOxX8mdE3JJWOSYO&sz=w1000';
+const HERO_VIDEO_URL = 'https://drive.google.com/uc?export=download&id=1jQZ0LhTSbTMAip5WMD0pN3pJQk2p85m3';
+
 const articles = [
   { kicker: 'Y Magazine · Отпуск', title: 'Мужчина в отпуске', note: 'Летний гардероб Raschini', cls: 'road', href: 'https://ymag.media/articles/muzhchina-v-otpuske' },
   { kicker: 'Y Magazine · Ремесло', title: 'В неаполитанских традициях', note: 'Крой, ткани, Su Misura', cls: 'tailor', href: 'https://ymag.media/articles/v-neapolitanskikh-tradiciyakh' },
@@ -14,7 +17,7 @@ const boutiques = [['Смоленский Пассаж', 'Москва'], ['Drea
 function BrandLogo({ compact = false, footer = false }: { compact?: boolean; footer?: boolean }) {
   return (
     <span className={`brandAsset ${compact ? 'isCompact' : ''} ${footer ? 'isFooter' : ''}`}>
-      {!compact && <img src="/brand/raschini-logo.png" alt="Raschini" width={700} height={379} />}
+      {!compact && <img src={LOGO_URL} alt="Raschini" width={700} height={379} />}
       {compact && <span className="wordmark">RASCHINI</span>}
     </span>
   );
@@ -66,8 +69,8 @@ export default function Home() {
       </header>
 
       <section id="top" className="hero heroVideo">
-        <video className="heroVideoEl" autoPlay muted loop playsInline preload="metadata" poster="/images/hero-poster.webp">
-          <source src="/video/hero-mobile.mp4" type="video/mp4" />
+        <video className="heroVideoEl" autoPlay muted loop playsInline preload="metadata">
+          <source src={HERO_VIDEO_URL} type="video/mp4" />
         </video>
         <div className="heroOverlay" />
         <div className="heroContent">
@@ -99,8 +102,8 @@ export default function Home() {
         .brandAsset img{display:block;width:clamp(180px,20vw,290px);height:auto;object-fit:contain}
         .brandAsset.isCompact .wordmark{display:block;font-family:var(--font-display),Georgia,serif;font-size:23px;letter-spacing:.31em;padding-left:.31em;color:#a38354;white-space:nowrap}
         .brandAsset.isFooter img{width:210px}
-        .heroVideoEl{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center}
-        .heroOverlay{background:linear-gradient(180deg,rgba(0,0,0,.13),rgba(0,0,0,.06) 34%,rgba(0,0,0,.62) 100%)}
+        .heroVideoEl{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;background:#111}
+        .heroOverlay{background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.04) 34%,rgba(0,0,0,.62) 100%)}
         .headerCompact .burger span{background:#17130f}
         @media(max-width:900px){
           html,body{min-height:100%;background:#000}
@@ -120,7 +123,6 @@ export default function Home() {
           .hero h1{font-size:18vw}
           .heroContent{bottom:max(24px,calc(env(safe-area-inset-bottom) + 18px))}
         }
-        @media(prefers-reduced-motion:reduce){.heroVideoEl{display:none}.heroVideo{background:url('/images/hero-poster.webp') center/cover no-repeat}}
       `}</style>
     </main>
   );
