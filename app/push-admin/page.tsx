@@ -1,0 +1,49 @@
+'use client';
+
+import { FormEvent, useState } from 'react';
+
+export default function PushAdminPage() {
+  const [token, setToken] = useState('');
+  const [title, setTitle] = useState('Новая летняя коллекция Raschini');
+  const [body, setBody] = useState('Неаполитанская лёгкость и новые образы уже доступны онлайн.');
+  const [url, setUrl] = useState('https://raschini.com/new/');
+  const [result, setResult] = useState('');
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setResult('Отправляем…');
+    const response = await fetch('/api/push/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+      body: JSON.stringify({ title, body, url }),
+    });
+    const data = await response.json();
+    setResult(response.ok ? `Отправлено: ${data.sent} из ${data.total}` : `Ошибка: ${data.error || response.status}`);
+  }
+
+  return (
+    <main className="admin">
+      <form onSubmit={submit}>
+        <p>Raschini PWA</p>
+        <h1>Отправить push</h1>
+        <label>Секрет администратора<input type="password" value={token} onChange={(e) => setToken(e.target.value)} required /></label>
+        <label>Заголовок<input value={title} onChange={(e) => setTitle(e.target.value)} required /></label>
+        <label>Текст<textarea value={body} onChange={(e) => setBody(e.target.value)} required /></label>
+        <label>Ссылка<input type="url" value={url} onChange={(e) => setUrl(e.target.value)} required /></label>
+        <button type="submit">Отправить уведомление</button>
+        <output>{result}</output>
+      </form>
+      <style jsx>{`
+        .admin{min-height:100svh;background:#eee8df;color:#17130f;padding:60px 20px;display:grid;place-items:center}
+        form{width:min(620px,100%);display:grid;gap:22px}
+        p{margin:0;text-transform:uppercase;letter-spacing:.24em;font-size:10px;color:#987b55}
+        h1{margin:0 0 12px;font-family:var(--font-display),serif;font-size:clamp(52px,8vw,88px);font-weight:400;line-height:.85}
+        label{display:grid;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:9px}
+        input,textarea{width:100%;border:0;border-bottom:1px solid rgba(23,19,15,.3);background:transparent;padding:12px 0;font:16px var(--font-sans),sans-serif;color:inherit;outline:none}
+        textarea{min-height:110px;resize:vertical}
+        button{justify-self:start;border:1px solid #17130f;background:#17130f;color:#fff;padding:14px 22px;text-transform:uppercase;letter-spacing:.16em;font-size:10px;cursor:pointer}
+        output{min-height:22px;font-size:13px;color:#7b6548}
+      `}</style>
+    </main>
+  );
+}
