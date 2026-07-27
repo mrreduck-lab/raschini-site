@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-const LOGO_URL = 'https://drive.google.com/thumbnail?id=1z_j_76krs1HNLa_KhOxX8mdE3JJWOSYO&sz=w1000';
-const HERO_VIDEO_URL = 'https://drive.google.com/uc?export=download&id=1jQZ0LhTSbTMAip5WMD0pN3pJQk2p85m3';
+const LOGO_URL = '/IMG_4803.png';
+const HERO_VIDEO_URL = '/copy_5C18ACC9-0A1A-4565-92BA-0757C4EDB946.mp4';
 
 const articles = [
   { kicker: 'Y Magazine · Отпуск', title: 'Мужчина в отпуске', note: 'Летний гардероб Raschini', cls: 'road', href: 'https://ymag.media/articles/muzhchina-v-otpuske' },
