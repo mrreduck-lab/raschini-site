@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+const OFFICIAL_LOGO = 'https://raschini.com/wp-content/themes/raschini_new/img/logo.svg';
+
 const articles = [
   { kicker: 'Путешествие', title: 'Дорога на юг', note: 'Napoli / Amalfi', cls: 'road', href: 'https://www.instagram.com/raschini_official/' },
   { kicker: 'Портновское искусство', title: 'Совершенство в деталях', note: 'Su misura', cls: 'tailor', href: 'https://raschini.com/individualnyj-poshiv/' },
@@ -14,6 +16,15 @@ const boutiques = [
   ['Dream House', 'Барвиха'],
   ['Архангельское Outlet', 'Москва'],
 ];
+
+function BrandLogo({ footer = false }: { footer?: boolean }) {
+  return (
+    <span className={footer ? 'footerBrand brandAsset' : 'brand brandAsset'}>
+      <img src={OFFICIAL_LOGO} alt="Raschini" width="220" height="54" />
+      <span className="brandFallback" aria-hidden="true">RASCHINI</span>
+    </span>
+  );
+}
 
 export default function Home() {
   useEffect(() => {
@@ -38,7 +49,7 @@ export default function Home() {
         <nav className="leftNav" aria-label="Основная навигация">
           <a href="#journal">Мир Raschini</a><a href="https://raschini.com/new/">Коллекции</a><a href="#su-misura">Индивидуальный заказ</a><a href="#boutiques">Бутики</a>
         </nav>
-        <a className="brand" href="#top" aria-label="Raschini — на главную"><span>R</span>RASCHINI<small>MADE IN ITALY</small></a>
+        <a className="brandLink" href="#top" aria-label="Raschini — на главную"><BrandLogo /></a>
         <nav className="rightNav" aria-label="Сервисы"><a href="https://raschini.com/?s=">Поиск</a><a href="https://raschini.com/my-account/">Кабинет</a><a href="https://raschini.com/cart/">Корзина</a></nav>
       </header>
 
@@ -91,7 +102,7 @@ export default function Home() {
 
       <footer className="footer">
         <nav><a href="https://raschini.com/new/">Коллекции</a><a href="#journal">Мир Raschini</a><a href="#su-misura">Индивидуальный заказ</a><a href="#boutiques">Бутики</a></nav>
-        <div className="footerBrand"><span>R</span>RASCHINI<small>MADE IN ITALY</small></div>
+        <BrandLogo footer />
         <nav><a href="https://www.instagram.com/raschini_official/" target="_blank" rel="noreferrer">Instagram</a><a href="https://raschini.com/my-account/">Личный кабинет</a><a href="mailto:info@raschini.com">info@raschini.com</a></nav>
       </footer>
     </main>
