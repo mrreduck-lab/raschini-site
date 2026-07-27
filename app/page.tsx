@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-const OFFICIAL_LOGO = 'https://lh3.googleusercontent.com/d/1z_j_76krs1HNLa_KhOxX8mdE3JJWOSYO';
+const OFFICIAL_LOGO = '/raschini-logo.svg';
 
 const articles = [
   { kicker: 'Y Magazine · Отпуск', title: 'Мужчина в отпуске', note: 'Летний гардероб Raschini', cls: 'road', href: 'https://ymag.media/articles/muzhchina-v-otpuske' },
@@ -21,7 +21,6 @@ function BrandLogo({ footer = false }: { footer?: boolean }) {
   return (
     <span className={footer ? 'footerBrand brandAsset' : 'brand brandAsset'}>
       <img src={OFFICIAL_LOGO} alt="Raschini" width={700} height={379} />
-      <span className="brandFallback" aria-hidden="true">RASCHINI</span>
     </span>
   );
 }
@@ -110,24 +109,23 @@ export default function Home() {
         .brandLink{justify-self:center;display:block;line-height:0}
         .brandAsset{position:relative;display:block;width:118px;line-height:0}
         .brandAsset img{display:block;width:100%;height:auto;object-fit:contain}
-        .brandFallback{display:none!important}
         .footerBrand.brandAsset{width:210px}
         @media(max-width:900px){
           html,body{min-height:100%;background:#000}
-          .hero{height:100vh;height:100dvh;min-height:100dvh}
-          .header{padding-top:max(20px,env(safe-area-inset-top));align-items:start}
-          .brandLink{position:absolute;top:max(17px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:2}
-          .brandAsset{width:94px;max-height:62px;overflow:hidden}
-          .brandAsset img{max-height:62px;width:auto;max-width:94px;margin:0 auto}
+          .hero{height:100vh;height:100svh;height:100dvh;min-height:100vh;min-height:100svh;min-height:100dvh}
+          .header{padding-top:max(18px,env(safe-area-inset-top));align-items:start}
+          .brandLink{position:absolute;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:2}
+          .brandAsset{width:82px;max-height:72px;overflow:hidden}
+          .brandAsset img{max-height:72px;width:auto;max-width:82px;margin:0 auto}
           .heroMedia{background-position:center top}
         }
         @media(max-width:520px){
-          .hero{height:100vh!important;height:100dvh!important;min-height:100dvh!important}
+          .hero{height:100vh!important;height:100svh!important;height:100dvh!important;min-height:100vh!important;min-height:100svh!important;min-height:100dvh!important}
           .heroMedia{inset:0;background-size:cover;background-position:center top}
-          .heroContent{bottom:max(28px,calc(env(safe-area-inset-bottom) + 20px))}
-          .brandLink{top:max(14px,env(safe-area-inset-top))}
-          .brandAsset{width:86px;max-height:56px}
-          .brandAsset img{max-height:56px;max-width:86px}
+          .heroContent{bottom:max(22px,calc(env(safe-area-inset-bottom) + 16px))}
+          .brandLink{top:max(10px,env(safe-area-inset-top))}
+          .brandAsset{width:76px;max-height:66px}
+          .brandAsset img{max-height:66px;max-width:76px}
         }
       `}</style>
     </main>
