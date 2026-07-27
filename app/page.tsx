@@ -105,6 +105,31 @@ export default function Home() {
         <BrandLogo footer />
         <nav><a href="https://www.instagram.com/raschini_official/" target="_blank" rel="noreferrer">Instagram</a><a href="https://raschini.com/my-account/">Личный кабинет</a><a href="mailto:info@raschini.com">info@raschini.com</a></nav>
       </footer>
+
+      <style jsx global>{`
+        .brandLink{justify-self:center;display:block;line-height:0}
+        .brandAsset{position:relative;display:block;width:118px;line-height:0}
+        .brandAsset img{display:block;width:100%;height:auto;object-fit:contain}
+        .brandFallback{display:none!important}
+        .footerBrand.brandAsset{width:210px}
+        @media(max-width:900px){
+          html,body{min-height:100%;background:#000}
+          .hero{height:100vh;height:100dvh;min-height:100dvh}
+          .header{padding-top:max(20px,env(safe-area-inset-top));align-items:start}
+          .brandLink{position:absolute;top:max(17px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:2}
+          .brandAsset{width:94px;max-height:62px;overflow:hidden}
+          .brandAsset img{max-height:62px;width:auto;max-width:94px;margin:0 auto}
+          .heroMedia{background-position:center top}
+        }
+        @media(max-width:520px){
+          .hero{height:100vh!important;height:100dvh!important;min-height:100dvh!important}
+          .heroMedia{inset:0;background-size:cover;background-position:center top}
+          .heroContent{bottom:max(28px,calc(env(safe-area-inset-bottom) + 20px))}
+          .brandLink{top:max(14px,env(safe-area-inset-top))}
+          .brandAsset{width:86px;max-height:56px}
+          .brandAsset img{max-height:56px;max-width:86px}
+        }
+      `}</style>
     </main>
   );
 }
