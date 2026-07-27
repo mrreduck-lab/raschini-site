@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-const OFFICIAL_LOGO = 'https://raschini.com/wp-content/themes/raschini_new/img/logo.svg';
+const OFFICIAL_LOGO = 'https://drive.google.com/uc?export=view&id=1z_j_76krs1HNLa_KhOxX8mdE3JJWOSYO';
 
 const articles = [
   { kicker: 'Путешествие', title: 'Дорога на юг', note: 'Napoli / Amalfi', cls: 'road', href: 'https://www.instagram.com/raschini_official/' },
@@ -21,14 +21,14 @@ function BrandLogo({ footer = false }: { footer?: boolean }) {
   return (
     <span
       className={footer ? 'footerBrand' : 'brand'}
-      style={{ display: 'block', width: footer ? '190px' : '172px', lineHeight: 0 }}
+      style={{ display: 'block', width: footer ? '210px' : '118px', lineHeight: 0 }}
     >
       <img
         src={OFFICIAL_LOGO}
         alt="Raschini"
-        width={220}
-        height={54}
-        style={{ display: 'block', width: '100%', height: 'auto', filter: 'brightness(0) invert(1)' }}
+        width={700}
+        height={379}
+        style={{ display: 'block', width: '100%', height: 'auto' }}
       />
     </span>
   );
