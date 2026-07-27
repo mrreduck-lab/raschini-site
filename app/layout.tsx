@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Manrope } from 'next/font/google';
 import './globals.css';
+import './overrides.css';
 
 const display = Cormorant_Garamond({
   subsets: ['cyrillic', 'latin'],
