@@ -2,13 +2,13 @@
 
 import { useEffect } from 'react';
 
-const OFFICIAL_LOGO = 'https://drive.google.com/uc?export=view&id=1z_j_76krs1HNLa_KhOxX8mdE3JJWOSYO';
+const OFFICIAL_LOGO = 'https://lh3.googleusercontent.com/d/1z_j_76krs1HNLa_KhOxX8mdE3JJWOSYO';
 
 const articles = [
-  { kicker: 'Путешествие', title: 'Дорога на юг', note: 'Napoli / Amalfi', cls: 'road', href: 'https://www.instagram.com/raschini_official/' },
-  { kicker: 'Портновское искусство', title: 'Совершенство в деталях', note: 'Su misura', cls: 'tailor', href: 'https://raschini.com/individualnyj-poshiv/' },
-  { kicker: 'Культура', title: 'Искусство жить красиво', note: 'Beyond the season', cls: 'culture', href: 'https://www.instagram.com/raschini_official/' },
-  { kicker: 'Вдохновение', title: 'Лёгкость и естественность', note: 'Summer 2026', cls: 'nature', href: 'https://raschini.com/new/' },
+  { kicker: 'Y Magazine · Отпуск', title: 'Мужчина в отпуске', note: 'Летний гардероб Raschini', cls: 'road', href: 'https://ymag.media/articles/muzhchina-v-otpuske' },
+  { kicker: 'Y Magazine · Ремесло', title: 'В неаполитанских традициях', note: 'Крой, ткани, Su Misura', cls: 'tailor', href: 'https://ymag.media/articles/v-neapolitanskikh-tradiciyakh' },
+  { kicker: 'РБК · История', title: 'Люди и традиции Raschini', note: 'Редакционный материал', cls: 'culture', href: 'https://www.rbc.ru/society/25/02/2026/699eaf899a79477bfd8743b8' },
+  { kicker: 'РБК Стиль · Выбор', title: 'Вневременной мужской гардероб', note: 'Вещи, которые остаются', cls: 'nature', href: 'https://style.rbc.ru/items/6a4f71579a794752f32bf69f' },
 ];
 
 const boutiques = [
@@ -19,17 +19,9 @@ const boutiques = [
 
 function BrandLogo({ footer = false }: { footer?: boolean }) {
   return (
-    <span
-      className={footer ? 'footerBrand' : 'brand'}
-      style={{ display: 'block', width: footer ? '210px' : '118px', lineHeight: 0 }}
-    >
-      <img
-        src={OFFICIAL_LOGO}
-        alt="Raschini"
-        width={700}
-        height={379}
-        style={{ display: 'block', width: '100%', height: 'auto' }}
-      />
+    <span className={footer ? 'footerBrand brandAsset' : 'brand brandAsset'}>
+      <img src={OFFICIAL_LOGO} alt="Raschini" width={700} height={379} />
+      <span className="brandFallback" aria-hidden="true">RASCHINI</span>
     </span>
   );
 }
@@ -57,7 +49,7 @@ export default function Home() {
         <nav className="leftNav" aria-label="Основная навигация">
           <a href="#journal">Мир Raschini</a><a href="https://raschini.com/new/">Коллекции</a><a href="#su-misura">Индивидуальный заказ</a><a href="#boutiques">Бутики</a>
         </nav>
-        <a href="#top" aria-label="Raschini — на главную"><BrandLogo /></a>
+        <a className="brandLink" href="#top" aria-label="Raschini — на главную"><BrandLogo /></a>
         <nav className="rightNav" aria-label="Сервисы"><a href="https://raschini.com/?s=">Поиск</a><a href="https://raschini.com/my-account/">Кабинет</a><a href="https://raschini.com/cart/">Корзина</a></nav>
       </header>
 
@@ -82,11 +74,11 @@ export default function Home() {
       <section className="journalGrid" data-reveal>
         <article className="journalIntro lightPanel">
           <p>Raschini Journal</p><h2>Идеи.<br/>Люди.<br/>Стиль.</h2><i />
-          <span>Путешествия, культура, ремесло и вещи, которые становятся частью личной истории.</span>
-          <a href="https://www.instagram.com/raschini_official/" target="_blank" rel="noreferrer">Смотреть журнал <b>↗</b></a>
+          <span>Путешествия, культура и неаполитанское ремесло — в материалах Raschini и ведущих редакций.</span>
+          <a href="https://ymag.media/articles/muzhchina-v-otpuske" target="_blank" rel="noreferrer">Читать материалы <b>↗</b></a>
         </article>
         {articles.map(({ kicker, title, note, cls, href }, index) => (
-          <a className={`story story-${cls}`} key={title} href={href} style={{ '--delay': `${index * 90}ms` } as React.CSSProperties}>
+          <a className={`story story-${cls}`} key={title} href={href} target="_blank" rel="noreferrer" style={{ '--delay': `${index * 90}ms` } as React.CSSProperties}>
             <div className="storyMedia"/><div className="shade"/><p>{kicker}<small>{note}</small></p><h3>{title}</h3><b className="storyArrow">↗</b>
           </a>
         ))}
@@ -94,12 +86,12 @@ export default function Home() {
 
       <section id="su-misura" className="madeMeasure" data-reveal>
         <div className="clothPhoto" role="img" aria-label="Raschini Su Misura" />
-        <article><p>Su Misura</p><h2>Создано<br/>для одного<br/>человека.</h2><i /><span>Более 600 тканей, ручная работа неаполитанских мастеров и посадка, которая учитывает ваш образ жизни.</span><a href="https://raschini.com/individualnyj-poshiv/">Записаться на примерку <b>↗</b></a></article>
+        <article><p>Su Misura</p><h2>Создано<br/>для одного<br/>человека.</h2><i /><span>Выкройка на основе 21 мерки, итальянское производство и финальная доводка в ателье Raschini.</span><a href="https://raschini.com/individualnyj-poshiv/">Записаться на примерку <b>↗</b></a></article>
       </section>
 
       <section className="collectionSplit" data-reveal>
-        <article className="collectionPhoto collectionMens"><div><p>Uomo</p><h2>Летняя<br/>коллекция</h2><a href="https://raschini.com/product-category/clothes/men-clothes/">Мужская одежда ↗</a></div></article>
-        <article className="collectionPhoto collectionDetails"><div><p>Essential</p><h2>Вещи,<br/>которые остаются</h2><a href="https://raschini.com/product-category/accessories/">Аксессуары ↗</a></div></article>
+        <article className="collectionPhoto collectionMens"><div><p>Uomo</p><h2>Мужчина<br/>в отпуске</h2><a href="https://ymag.media/articles/muzhchina-v-otpuske">Читать историю ↗</a></div></article>
+        <article className="collectionPhoto collectionDetails"><div><p>Napoli</p><h2>Вещи,<br/>которые движутся<br/>вместе с вами</h2><a href="https://ymag.media/articles/v-neapolitanskikh-tradiciyakh">Неаполитанский крой ↗</a></div></article>
       </section>
 
       <section id="boutiques" className="boutiqueBlock" data-reveal>
