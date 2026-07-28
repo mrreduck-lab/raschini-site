@@ -38,13 +38,7 @@ final class Raschini_PWA_Handoff {
     }
 
     public static function add_settings_page() {
-        add_options_page(
-            'Raschini PWA',
-            'Raschini PWA',
-            'manage_options',
-            'raschini-pwa',
-            [__CLASS__, 'render_settings']
-        );
+        add_options_page('Raschini PWA', 'Raschini PWA', 'manage_options', 'raschini-pwa', [__CLASS__, 'render_settings']);
     }
 
     public static function render_settings() {
@@ -55,15 +49,8 @@ final class Raschini_PWA_Handoff {
             <form method="post" action="options.php">
                 <?php settings_fields('raschini_pwa'); ?>
                 <table class="form-table" role="presentation">
-                    <tr>
-                        <th scope="row"><label for="raschini_pwa_base_url">PWA base URL</label></th>
-                        <td><input class="regular-text" id="raschini_pwa_base_url" name="<?php echo esc_attr(self::OPTION_PWA_BASE); ?>" value="<?php echo esc_attr(get_option(self::OPTION_PWA_BASE, 'https://raschini-site.vercel.app')); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="raschini_pwa_shared_secret">Shared secret</label></th>
-                        <td><input class="regular-text" type="password" autocomplete="new-password" id="raschini_pwa_shared_secret" name="<?php echo esc_attr(self::OPTION_SHARED_SECRET); ?>" value="<?php echo esc_attr(get_option(self::OPTION_SHARED_SECRET, '')); ?>" />
-                        <p class="description">Must exactly match PWA_WORDPRESS_SHARED_SECRET in Vercel.</p></td>
-                    </tr>
+                    <tr><th scope="row"><label for="raschini_pwa_base_url">PWA base URL</label></th><td><input class="regular-text" id="raschini_pwa_base_url" name="<?php echo esc_attr(self::OPTION_PWA_BASE); ?>" value="<?php echo esc_attr(get_option(self::OPTION_PWA_BASE, 'https://raschini-site.vercel.app')); ?>" /></td></tr>
+                    <tr><th scope="row"><label for="raschini_pwa_shared_secret">Shared secret</label></th><td><input class="regular-text" type="password" autocomplete="new-password" id="raschini_pwa_shared_secret" name="<?php echo esc_attr(self::OPTION_SHARED_SECRET); ?>" value="<?php echo esc_attr(get_option(self::OPTION_SHARED_SECRET, '')); ?>" /><p class="description">Must exactly match PWA_WORDPRESS_SHARED_SECRET in Vercel.</p></td></tr>
                 </table>
                 <?php submit_button(); ?>
             </form>
@@ -72,18 +59,9 @@ final class Raschini_PWA_Handoff {
     }
 
     public static function shortcode($atts) {
-        $atts = shortcode_atts([
-            'label' => 'Добавить Raschini',
-            'class' => 'raschini-pwa-install-link',
-        ], $atts, 'raschini_pwa_install_link');
-
+        $atts = shortcode_atts(['label' => 'Добавить Raschini', 'class' => 'raschini-pwa-install-link'], $atts, 'raschini_pwa_install_link');
         $url = add_query_arg(self::CONNECT_ACTION, '1', home_url('/'));
-        return sprintf(
-            '<a class="%s" href="%s">%s</a>',
-            esc_attr($atts['class']),
-            esc_url($url),
-            esc_html($atts['label'])
-        );
+        return sprintf('<a class="%s" href="%s">%s</a>', esc_attr($atts['class']), esc_url($url), esc_html($atts['label']));
     }
 
     private static function user_assertion() {
@@ -124,9 +102,7 @@ final class Raschini_PWA_Handoff {
         }
 
         $assertion = self::user_assertion();
-        if (is_wp_error($assertion)) {
-            wp_die(esc_html($assertion->get_error_message()), 'Raschini PWA', ['response' => 500]);
-        }
+        if (is_wp_error($assertion)) wp_die(esc_html($assertion->get_error_message()), 'Raschini PWA', ['response' => 500]);
 
         $pwa_base = untrailingslashit((string) get_option(self::OPTION_PWA_BASE, 'https://raschini-site.vercel.app'));
         $response = wp_remote_post($pwa_base . '/api/pwa/handoff/issue', [
@@ -135,17 +111,13 @@ final class Raschini_PWA_Handoff {
             'body' => wp_json_encode(['assertion' => $assertion]),
         ]);
 
-        if (is_wp_error($response)) {
-            wp_die('Не удалось связаться с PWA. Попробуйте позже.', 'Raschini PWA', ['response' => 502]);
-        }
+        if (is_wp_error($response)) wp_die('Не удалось связаться с PWA. Попробуйте позже.', 'Raschini PWA', ['response' => 502]);
 
         $status = wp_remote_retrieve_response_code($response);
         $body = json_decode(wp_remote_retrieve_body($response), true);
-        if ($status !== 200 || empty($body['handoff'])) {
-            wp_die('Не удалось подготовить безопасный вход в приложение.', 'Raschini PWA', ['response' => 502]);
-        }
+        if ($status !== 200 || empty($body['handoff'])) wp_die('Не удалось подготовить безопасный вход в приложение.', 'Raschini PWA', ['response' => 502]);
 
-        $target = add_query_arg('handoff', rawurlencode($body['handoff']), $pwa_base . '/pwa-start');
+        $target = add_query_arg('handoff', $body['handoff'], $pwa_base . '/pwa-start');
         wp_redirect($target, 302, 'Raschini PWA');
         exit;
     }
