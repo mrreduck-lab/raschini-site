@@ -5,7 +5,8 @@ import { listSubscriptions, removeSubscription } from '@/lib/push-store';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
-const PUSH_TIMEOUT_MS = 12000;
+const PUSH_TIMEOUT_MS = 7000;
+const REMOVE_TIMEOUT_MS = 3000;
 
 function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : String(error);
@@ -42,6 +43,11 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, label: str
   }
 }
 
+type DeliveryResult =
+  | { kind: 'sent' }
+  | { kind: 'removed' }
+  | { kind: 'failed'; endpoint: string; statusCode?: number; error: string };
+
 export async function POST(request: NextRequest) {
   const startedAt = Date.now();
   const token = request.headers.get('x-admin-token');
@@ -63,7 +69,7 @@ export async function POST(request: NextRequest) {
       title: body.title || 'Новая летняя коллекция Raschini',
       body: body.body || 'Неаполитанская лёгкость и новые образы уже доступны онлайн.',
       url: body.url || 'https://raschini.com/new/',
-      icon: '/icons/push-icon-192.png',
+      icon: image || '/icons/push-icon-192.png',
       image,
     });
 
@@ -73,33 +79,38 @@ export async function POST(request: NextRequest) {
     const subscriptions = await listSubscriptions();
     const redisLatencyMs = Date.now() - redisStartedAt;
 
-    let sent = 0;
-    let removed = 0;
-    const failures: Array<{ endpoint: string; statusCode?: number; error: string }> = [];
-
-    for (const subscription of subscriptions) {
+    const results = await Promise.all(subscriptions.map(async (subscription): Promise<DeliveryResult> => {
       try {
         await withTimeout(
           webpush.sendNotification(subscription as webpush.PushSubscription, payload),
           PUSH_TIMEOUT_MS,
           'Push delivery',
         );
-        sent += 1;
+        return { kind: 'sent' };
       } catch (error: unknown) {
         const statusCode = statusCodeOf(error);
         if (statusCode === 404 || statusCode === 410) {
-          await removeSubscription(subscription);
-          removed += 1;
-        } else {
-          failures.push({
-            endpoint: subscription.endpoint.slice(0, 80),
-            statusCode,
-            error: errorMessage(error),
-          });
-          console.error('Push send failed', { statusCode, error });
+          try {
+            await withTimeout(removeSubscription(subscription), REMOVE_TIMEOUT_MS, 'Subscription cleanup');
+          } catch (cleanupError) {
+            console.error('Push subscription cleanup failed', cleanupError);
+          }
+          return { kind: 'removed' };
         }
+
+        console.error('Push send failed', { statusCode, error });
+        return {
+          kind: 'failed',
+          endpoint: subscription.endpoint.slice(0, 80),
+          statusCode,
+          error: errorMessage(error),
+        };
       }
-    }
+    }));
+
+    const sent = results.filter((result) => result.kind === 'sent').length;
+    const removed = results.filter((result) => result.kind === 'removed').length;
+    const failures = results.filter((result): result is Extract<DeliveryResult, { kind: 'failed' }> => result.kind === 'failed');
 
     return NextResponse.json({
       ok: failures.length === 0,
