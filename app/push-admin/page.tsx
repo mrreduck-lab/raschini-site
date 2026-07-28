@@ -8,17 +8,40 @@ export default function PushAdminPage() {
   const [body, setBody] = useState('Неаполитанская лёгкость и новые образы уже доступны онлайн.');
   const [url, setUrl] = useState('https://raschini.com/new/');
   const [result, setResult] = useState('');
+  const [sending, setSending] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    setSending(true);
     setResult('Отправляем…');
-    const response = await fetch('/api/push/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
-      body: JSON.stringify({ title, body, url }),
-    });
-    const data = await response.json();
-    setResult(response.ok ? `Отправлено: ${data.sent} из ${data.total}` : `Ошибка: ${data.error || response.status}`);
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
+
+    try {
+      const response = await fetch('/api/push/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+        body: JSON.stringify({ title, body, url }),
+        signal: controller.signal,
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        setResult(`Отправлено: ${data.sent} из ${data.total}. Redis: ${data.redisLatencyMs} мс, всего: ${data.durationMs} мс.`);
+      } else {
+        const details = data.failures?.length ? ` ${JSON.stringify(data.failures)}` : '';
+        setResult(`Ошибка: ${data.error || `HTTP ${response.status}`}.${details}`);
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error && error.name === 'AbortError'
+        ? 'Запрос превысил 25 секунд и был остановлен.'
+        : error instanceof Error ? error.message : String(error);
+      setResult(`Ошибка: ${message}`);
+    } finally {
+      clearTimeout(timeout);
+      setSending(false);
+    }
   }
 
   return (
@@ -30,7 +53,8 @@ export default function PushAdminPage() {
         <label>Заголовок<input value={title} onChange={(e) => setTitle(e.target.value)} required /></label>
         <label>Текст<textarea value={body} onChange={(e) => setBody(e.target.value)} required /></label>
         <label>Ссылка<input type="url" value={url} onChange={(e) => setUrl(e.target.value)} required /></label>
-        <button type="submit">Отправить уведомление</button>
+        <button type="submit" disabled={sending}>{sending ? 'Отправляем…' : 'Отправить уведомление'}</button>
+        <a href="/debug-push">Открыть диагностику</a>
         <output>{result}</output>
       </form>
       <style jsx>{`
@@ -42,7 +66,9 @@ export default function PushAdminPage() {
         input,textarea{width:100%;border:0;border-bottom:1px solid rgba(23,19,15,.3);background:transparent;padding:12px 0;font:16px var(--font-sans),sans-serif;color:inherit;outline:none}
         textarea{min-height:110px;resize:vertical}
         button{justify-self:start;border:1px solid #17130f;background:#17130f;color:#fff;padding:14px 22px;text-transform:uppercase;letter-spacing:.16em;font-size:10px;cursor:pointer}
-        output{min-height:22px;font-size:13px;color:#7b6548}
+        button:disabled{opacity:.55;cursor:wait}
+        a{width:max-content;border-bottom:1px solid currentColor;padding-bottom:5px;text-transform:uppercase;letter-spacing:.14em;font-size:9px}
+        output{min-height:22px;font-size:13px;line-height:1.55;color:#7b6548;word-break:break-word}
       `}</style>
     </main>
   );
