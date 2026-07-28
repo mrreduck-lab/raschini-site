@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from 'react';
 
-function urlBase64ToUint8Array(value: string) {
+function urlBase64ToUint8Array(value: string): Uint8Array {
   const padding = '='.repeat((4 - value.length % 4) % 4);
   const base64 = (value + padding).replace(/-/g, '+').replace(/_/g, '/');
   const raw = window.atob(base64);
-  return Uint8Array.from([...raw].map((char) => char.charCodeAt(0)));
+  const output = new Uint8Array(raw.length);
+  for (let index = 0; index < raw.length; index += 1) {
+    output[index] = raw.charCodeAt(index);
+  }
+  return output;
 }
 
 export default function PushPrompt() {
@@ -30,7 +34,7 @@ export default function PushPrompt() {
       const registration = await navigator.serviceWorker.ready;
       const keyResponse = await fetch('/api/push/public-key', { cache: 'no-store' });
       if (!keyResponse.ok) throw new Error('Push is not configured');
-      const { publicKey } = await keyResponse.json();
+      const { publicKey } = await keyResponse.json() as { publicKey: string };
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(publicKey),
