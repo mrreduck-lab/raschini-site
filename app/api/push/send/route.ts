@@ -13,7 +13,9 @@ export async function POST(request: NextRequest) {
   const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const privateKey = process.env.VAPID_PRIVATE_KEY;
   const subject = process.env.VAPID_SUBJECT || 'mailto:info@raschini.com';
-  if (!publicKey || !privateKey) return NextResponse.json({ error: 'VAPID is not configured' }, { status: 503 });
+  if (!publicKey || !privateKey) {
+    return NextResponse.json({ error: 'VAPID is not configured' }, { status: 503 });
+  }
 
   const body = await request.json() as { title?: string; body?: string; url?: string };
   const payload = JSON.stringify({
@@ -30,10 +32,14 @@ export async function POST(request: NextRequest) {
 
   await Promise.all(subscriptions.map(async (subscription) => {
     try {
-      await webpush.sendNotification(subscription, payload);
+      await webpush.sendNotification(subscription as webpush.PushSubscription, payload);
       sent += 1;
-    } catch (error: any) {
-      if (error?.statusCode === 404 || error?.statusCode === 410) {
+    } catch (error: unknown) {
+      const statusCode = typeof error === 'object' && error !== null && 'statusCode' in error
+        ? Number((error as { statusCode?: unknown }).statusCode)
+        : undefined;
+
+      if (statusCode === 404 || statusCode === 410) {
         await removeSubscription(subscription);
         removed += 1;
       } else {
