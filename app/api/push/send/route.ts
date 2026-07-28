@@ -18,6 +18,16 @@ function statusCodeOf(error: unknown) {
   return undefined;
 }
 
+function safeImageUrl(value?: string) {
+  if (!value) return undefined;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'https:' ? parsed.toString() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, label: string): Promise<T> {
   let timeout: ReturnType<typeof setTimeout> | undefined;
   try {
@@ -47,12 +57,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json() as { title?: string; body?: string; url?: string };
+    const body = await request.json() as { title?: string; body?: string; url?: string; image?: string };
+    const image = safeImageUrl(body.image);
     const payload = JSON.stringify({
       title: body.title || 'Новая летняя коллекция Raschini',
       body: body.body || 'Неаполитанская лёгкость и новые образы уже доступны онлайн.',
       url: body.url || 'https://raschini.com/new/',
-      icon: '/IMG_4803.png',
+      icon: '/icons/push-icon-192.png',
+      image,
     });
 
     webpush.setVapidDetails(subject, publicKey, privateKey);
