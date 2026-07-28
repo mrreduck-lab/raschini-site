@@ -17,6 +17,12 @@ function sign(value: string, secret: string) {
   return crypto.createHmac('sha256', secret).update(value).digest('base64url');
 }
 
+function safeEqual(a: string, b: string) {
+  const left = Buffer.from(a);
+  const right = Buffer.from(b);
+  return left.length === right.length && crypto.timingSafeEqual(left, right);
+}
+
 export type WordpressUserAssertion = {
   sub: string;
   name?: string;
@@ -31,7 +37,7 @@ export function verifyWordpressAssertion(assertion: string): WordpressUserAssert
   const [payloadPart, signature] = assertion.split('.');
   if (!payloadPart || !signature) throw new Error('Malformed WordPress assertion');
   const expected = sign(payloadPart, env('PWA_WORDPRESS_SHARED_SECRET'));
-  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) throw new Error('Invalid WordPress assertion');
+  if (!safeEqual(signature, expected)) throw new Error('Invalid WordPress assertion');
   const payload = JSON.parse(Buffer.from(payloadPart, 'base64url').toString('utf8')) as WordpressUserAssertion;
   const now = Math.floor(Date.now() / 1000);
   if (!payload.sub || payload.exp < now || payload.iat > now + 60) throw new Error('Expired WordPress assertion');
@@ -59,7 +65,7 @@ export function redeemHandoff(token: string) {
   const [payloadPart, signature] = token.split('.');
   if (!payloadPart || !signature) throw new Error('Malformed handoff');
   const expected = sign(payloadPart, env('PWA_HANDOFF_SECRET'));
-  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) throw new Error('Invalid handoff');
+  if (!safeEqual(signature, expected)) throw new Error('Invalid handoff');
   const payload = JSON.parse(Buffer.from(payloadPart, 'base64url').toString('utf8')) as WordpressUserAssertion & { type: string; jti: string };
   const now = Math.floor(Date.now() / 1000);
   if (payload.type !== 'pwa-handoff' || !payload.jti || payload.exp < now) throw new Error('Expired handoff');
@@ -68,7 +74,7 @@ export function redeemHandoff(token: string) {
 
 export function createSession(user: WordpressUserAssertion) {
   const now = Math.floor(Date.now() / 1000);
-  const payload = { type: 'pwa-session', ...user, iat: now, exp: now + SESSION_TTL_SECONDS };
+  const payload = { ...user, type: 'pwa-session', iat: now, exp: now + SESSION_TTL_SECONDS };
   const encoded = b64url(JSON.stringify(payload));
   return `${encoded}.${sign(encoded, env('PWA_SESSION_SECRET'))}`;
 }
@@ -77,8 +83,9 @@ export function readSession(token?: string) {
   if (!token) return null;
   try {
     const [payloadPart, signature] = token.split('.');
+    if (!payloadPart || !signature) return null;
     const expected = sign(payloadPart, env('PWA_SESSION_SECRET'));
-    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
+    if (!safeEqual(signature, expected)) return null;
     const payload = JSON.parse(Buffer.from(payloadPart, 'base64url').toString('utf8')) as WordpressUserAssertion & { type: string };
     if (payload.type !== 'pwa-session' || payload.exp < Math.floor(Date.now() / 1000)) return null;
     return payload;
