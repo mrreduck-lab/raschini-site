@@ -7,18 +7,67 @@ export type StoredPushSubscription = {
 const STORE_KEY = 'raschini:push:subscriptions';
 const REDIS_TIMEOUT_MS = 8000;
 
+function firstDefined(names: string[]) {
+  for (const name of names) {
+    const value = process.env[name];
+    if (value) return value;
+  }
+  return undefined;
+}
+
+function discoverRestUrl() {
+  const explicit = firstDefined([
+    'UPSTASH_REDIS_REST_URL',
+    'UPSTASH_REST_API_URL',
+    'UPSTASH_KV_REST_API_URL',
+    'KV_REST_API_URL',
+    'STORAGE_REST_API_URL',
+    'STORAGE_REST_URL',
+  ]);
+  if (explicit) return explicit;
+
+  const candidate = Object.entries(process.env).find(([key, value]) => {
+    if (!value?.startsWith('http')) return false;
+    const upper = key.toUpperCase();
+    return (upper.includes('UPSTASH') || upper.includes('KV') || upper.includes('REDIS')) &&
+      (upper.endsWith('_REST_API_URL') || upper.endsWith('_REST_URL'));
+  });
+
+  return candidate?.[1];
+}
+
+function discoverRestToken() {
+  const explicit = firstDefined([
+    'UPSTASH_REDIS_REST_TOKEN',
+    'UPSTASH_REST_API_TOKEN',
+    'UPSTASH_KV_REST_API_TOKEN',
+    'KV_REST_API_TOKEN',
+    'STORAGE_REST_API_TOKEN',
+    'STORAGE_REST_TOKEN',
+  ]);
+  if (explicit) return explicit;
+
+  const candidates = Object.entries(process.env).filter(([key, value]) => {
+    if (!value) return false;
+    const upper = key.toUpperCase();
+    return (upper.includes('UPSTASH') || upper.includes('KV') || upper.includes('REDIS')) &&
+      upper.includes('TOKEN') && !upper.includes('READ_ONLY');
+  });
+
+  return candidates[0]?.[1];
+}
+
 function config() {
-  const url =
-    process.env.UPSTASH_REDIS_REST_URL ||
-    process.env.KV_REST_API_URL ||
-    process.env.UPSTASH_KV_REST_API_URL;
+  const url = discoverRestUrl();
+  const token = discoverRestToken();
 
-  const token =
-    process.env.UPSTASH_REDIS_REST_TOKEN ||
-    process.env.KV_REST_API_TOKEN ||
-    process.env.UPSTASH_KV_REST_API_TOKEN;
+  if (!url || !token) {
+    const availableKeys = Object.keys(process.env)
+      .filter((key) => /UPSTASH|KV|REDIS|STORAGE/i.test(key))
+      .sort();
+    throw new Error(`Push storage is not configured. Available storage variables: ${availableKeys.join(', ') || 'none'}`);
+  }
 
-  if (!url || !token) throw new Error('Push storage is not configured');
   return { url: url.replace(/\/$/, ''), token };
 }
 
