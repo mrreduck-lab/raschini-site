@@ -4,13 +4,18 @@ self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim(
 self.addEventListener('push', (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; } catch {}
+
   const title = data.title || 'Raschini';
+  const fallbackIcon = '/icons/push-icon-192.png';
+  const image = typeof data.image === 'string' && data.image ? data.image : undefined;
+
   event.waitUntil(self.registration.showNotification(title, {
     body: data.body || '',
-    icon: data.icon || '/IMG_4803.png',
-    badge: data.badge || '/IMG_4803.png',
+    icon: image || data.icon || fallbackIcon,
+    image,
+    badge: fallbackIcon,
     data: { url: data.url || '/' },
-    tag: 'raschini-news',
+    tag: data.tag || `raschini-news-${Date.now()}`,
     renotify: true,
   }));
 });
