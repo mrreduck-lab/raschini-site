@@ -7,6 +7,7 @@ export default function PushAdminPage() {
   const [title, setTitle] = useState('Новая летняя коллекция Raschini');
   const [body, setBody] = useState('Неаполитанская лёгкость и новые образы уже доступны онлайн.');
   const [url, setUrl] = useState('https://raschini.com/new/');
+  const [image, setImage] = useState('');
   const [result, setResult] = useState('');
   const [sending, setSending] = useState(false);
 
@@ -22,7 +23,7 @@ export default function PushAdminPage() {
       const response = await fetch('/api/push/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
-        body: JSON.stringify({ title, body, url }),
+        body: JSON.stringify({ title, body, url, image: image.trim() || undefined }),
         signal: controller.signal,
       });
       const data = await response.json();
@@ -53,6 +54,8 @@ export default function PushAdminPage() {
         <label>Заголовок<input value={title} onChange={(e) => setTitle(e.target.value)} required /></label>
         <label>Текст<textarea value={body} onChange={(e) => setBody(e.target.value)} required /></label>
         <label>Ссылка<input type="url" value={url} onChange={(e) => setUrl(e.target.value)} required /></label>
+        <label>Фото для push — HTTPS-ссылка, необязательно<input type="url" placeholder="https://.../photo.jpg" value={image} onChange={(e) => setImage(e.target.value)} /></label>
+        <small>Без фото используется фирменная иконка Raschini. С фото оно подставляется в уведомление; отображение крупного изображения зависит от устройства.</small>
         <button type="submit" disabled={sending}>{sending ? 'Отправляем…' : 'Отправить уведомление'}</button>
         <a href="/debug-push">Открыть диагностику</a>
         <output>{result}</output>
@@ -65,6 +68,7 @@ export default function PushAdminPage() {
         label{display:grid;gap:8px;text-transform:uppercase;letter-spacing:.14em;font-size:9px}
         input,textarea{width:100%;border:0;border-bottom:1px solid rgba(23,19,15,.3);background:transparent;padding:12px 0;font:16px var(--font-sans),sans-serif;color:inherit;outline:none}
         textarea{min-height:110px;resize:vertical}
+        small{font-size:11px;line-height:1.55;color:#7b6548}
         button{justify-self:start;border:1px solid #17130f;background:#17130f;color:#fff;padding:14px 22px;text-transform:uppercase;letter-spacing:.16em;font-size:10px;cursor:pointer}
         button:disabled{opacity:.55;cursor:wait}
         a{width:max-content;border-bottom:1px solid currentColor;padding-bottom:5px;text-transform:uppercase;letter-spacing:.14em;font-size:9px}
