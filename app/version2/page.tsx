@@ -1,2 +1,154 @@
-const img=(url:string)=>`/api/version2/product-image?url=${encodeURIComponent(url)}`;
-export default function Version2Home(){return <main className="v2"><header className="v2Header"><nav className="v2Nav"><a href="/version2/shop">Мужчины</a><a href="#story">Истории</a><a href="https://raschini.com/individualnyj-poshiv/">Su Misura</a></nav><a className="v2Brand" href="/version2">RASCHINI</a><nav className="v2Tools"><a href="https://raschini.com/?s=">Поиск</a><a href="https://raschini.com/my-account/">Кабинет</a><a href="https://raschini.com/cart/">Корзина 0</a></nav></header><section className="v2Hero"><video autoPlay muted loop playsInline src="/copy_5C18ACC9-0A1A-4565-92BA-0757C4EDB946.mp4"/><div className="v2HeroCopy"><p className="v2Kicker">Spring Summer 2026</p><h1>Napoli<br/>in motion</h1><a className="v2Link" href="/version2/shop">Открыть коллекцию →</a></div></section><section id="story" className="v2Section v2Statement"><p className="v2Kicker">Raschini / Napoli</p><h2>Мягкий крой, характер и свобода движения — современный гардероб, собранный вокруг человека.</h2></section><section className="v2Tiles"><a className="v2Tile" href="/version2/shop/testgood"><img src={img('https://raschini.com/product/usxxii2016109bp/')} alt="Замшевая куртка Raschini"/><div className="v2TileCopy"><div><p className="v2Kicker">Outerwear</p><h3>Тихая<br/>уверенность</h3></div><span>Смотреть →</span></div></a><a className="v2Tile" href="/version2/shop"><img src={img('https://raschini.com/product/usxxv3021204bp/')} alt="Футболка Raschini"/><div className="v2TileCopy"><div><p className="v2Kicker">Essentials</p><h3>Летний<br/>ритм</h3></div><span>Коллекция →</span></div></a></section><footer className="v2Footer"><span>Москва · Неаполь</span><strong>RASCHINI</strong><span style={{textAlign:'right'}}>© 2026</span></footer></main>}
+const img = (url: string) =>
+  `/api/version2/product-image?url=${encodeURIComponent(url)}`;
+
+const slideBase: React.CSSProperties = {
+  position: 'sticky',
+  top: 0,
+  height: '100svh',
+  overflow: 'hidden',
+  background: '#111',
+};
+
+const mediaBase: React.CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+};
+
+const shade: React.CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  background:
+    'linear-gradient(180deg, rgba(0,0,0,.12) 0%, rgba(0,0,0,.04) 45%, rgba(0,0,0,.62) 100%)',
+};
+
+const copy: React.CSSProperties = {
+  position: 'absolute',
+  zIndex: 2,
+  left: 'clamp(22px, 5vw, 72px)',
+  right: 'clamp(22px, 5vw, 72px)',
+  bottom: 'clamp(38px, 7vw, 82px)',
+  color: '#fff',
+  display: 'flex',
+  alignItems: 'end',
+  justifyContent: 'space-between',
+  gap: 28,
+};
+
+const title: React.CSSProperties = {
+  fontFamily: 'var(--font-display), serif',
+  fontSize: 'clamp(34px, 5vw, 72px)',
+  lineHeight: 0.96,
+  fontWeight: 400,
+  letterSpacing: '-.025em',
+  margin: '10px 0 0',
+  maxWidth: 760,
+};
+
+export default function Version2Home() {
+  return (
+    <main className="v2">
+      <header className="v2Header">
+        <nav className="v2Nav">
+          <a href="/version2/shop">Мужчины</a>
+          <a href="#collection">Коллекция</a>
+          <a href="https://raschini.com/individualnyj-poshiv/">Su Misura</a>
+        </nav>
+        <a className="v2Brand" href="/version2">RASCHINI</a>
+        <nav className="v2Tools">
+          <a href="https://raschini.com/?s=">Поиск</a>
+          <a href="https://raschini.com/my-account/">Кабинет</a>
+          <a href="https://raschini.com/cart/">Корзина 0</a>
+        </nav>
+      </header>
+
+      <section style={{ ...slideBase, zIndex: 1 }} aria-label="Raschini Spring Summer 2026">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          src="/copy_5C18ACC9-0A1A-4565-92BA-0757C4EDB946.mp4"
+          style={mediaBase}
+        />
+        <div style={shade} />
+        <div style={copy}>
+          <div>
+            <p className="v2Kicker">Spring Summer 2026</p>
+            <h1 style={title}>Неаполитанская лёгкость в движении</h1>
+          </div>
+          <a className="v2Link" href="/version2/shop">Коллекция →</a>
+        </div>
+      </section>
+
+      <section id="collection" style={{ ...slideBase, zIndex: 2 }} aria-label="Raschini outerwear">
+        <img
+          src={img('https://raschini.com/product/usxxii2016109bp/')}
+          alt="Замшевая куртка Raschini"
+          style={mediaBase}
+        />
+        <div style={shade} />
+        <div style={copy}>
+          <div>
+            <p className="v2Kicker">Outerwear</p>
+            <h2 style={title}>Материал говорит тише логотипа</h2>
+          </div>
+          <a className="v2Link" href="/version2/shop/testgood">Смотреть →</a>
+        </div>
+      </section>
+
+      <section style={{ ...slideBase, zIndex: 3 }} aria-label="Raschini summer essentials">
+        <img
+          src={img('https://raschini.com/product/usxxv3021204bp/')}
+          alt="Летняя коллекция Raschini"
+          style={mediaBase}
+        />
+        <div style={shade} />
+        <div style={copy}>
+          <div>
+            <p className="v2Kicker">Summer essentials</p>
+            <h2 style={title}>Гардероб без лишнего усилия</h2>
+          </div>
+          <a className="v2Link" href="/version2/shop">Открыть →</a>
+        </div>
+      </section>
+
+      <section style={{ ...slideBase, zIndex: 4, background: '#b22318' }} aria-label="Raschini Su Misura">
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'grid',
+            placeItems: 'center',
+            padding: 24,
+            color: '#fff',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ maxWidth: 820 }}>
+            <p className="v2Kicker">Su Misura · Napoli</p>
+            <h2 style={{ ...title, maxWidth: 'none', fontSize: 'clamp(38px, 6vw, 86px)' }}>
+              Вещь, созданная вокруг человека
+            </h2>
+            <a
+              className="v2Link"
+              href="https://raschini.com/individualnyj-poshiv/"
+              style={{ marginTop: 30 }}
+            >
+              Индивидуальный пошив →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <footer className="v2Footer" style={{ position: 'relative', zIndex: 5, background: '#f3efe7' }}>
+        <span>Москва · Неаполь</span>
+        <strong>RASCHINI</strong>
+        <span style={{ textAlign: 'right' }}>© 2026</span>
+      </footer>
+    </main>
+  );
+}
