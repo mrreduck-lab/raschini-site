@@ -1,5 +1,7 @@
 const img = (url: string) =>
   `/api/version2/product-image?url=${encodeURIComponent(url)}`;
+const campaign = (driveId: string) =>
+  `/api/version2/product-image?driveId=${encodeURIComponent(driveId)}`;
 
 const slideBase: React.CSSProperties = {
   position: 'sticky',
@@ -56,7 +58,7 @@ export default function Version2Home() {
           <a href="#collection">Коллекция</a>
           <a href="https://raschini.com/individualnyj-poshiv/">Su Misura</a>
         </nav>
-        <a className="v2Brand" href="/version2">RASCHINI</a>
+        <a className="v2Brand" href="/">RASCHINI</a>
         <nav className="v2Tools">
           <a href="https://raschini.com/?s=">Поиск</a>
           <a href="https://raschini.com/my-account/">Кабинет</a>
@@ -78,13 +80,29 @@ export default function Version2Home() {
         <div style={copy}>
           <div>
             <p className="v2Kicker">Spring Summer 2026</p>
-            <h1 style={title}>Неаполитанская лёгкость в движении</h1>
+            <h1 style={title}>Сила спокойствия</h1>
           </div>
-          <a className="v2Link" href="/version2/shop">Коллекция →</a>
+          <a className="v2Link" href="/version2/shop">Открыть коллекцию →</a>
         </div>
       </section>
 
-      <section id="collection" style={{ ...slideBase, zIndex: 2 }} aria-label="Raschini outerwear">
+      <section id="collection" style={{ ...slideBase, zIndex: 2 }} aria-label="Новый кампейн Raschini">
+        <img
+          src={campaign('1pX4WhVK0_wXQmiEEiYcP7HZV7HIYFeq7')}
+          alt="Новый кампейн Raschini — мужской костюм у моря"
+          style={{ ...mediaBase, objectPosition: '50% 34%' }}
+        />
+        <div style={shade} />
+        <div style={copy}>
+          <div>
+            <p className="v2Kicker">New campaign · South of Italy</p>
+            <h2 style={title}>Классика, которой не нужно доказывать свой статус</h2>
+          </div>
+          <a className="v2Link" href="/version2/shop">Смотреть образы →</a>
+        </div>
+      </section>
+
+      <section style={{ ...slideBase, zIndex: 3 }} aria-label="Raschini outerwear">
         <img
           src={img('https://raschini.com/product/usxxii2016109bp/')}
           alt="Замшевая куртка Raschini"
@@ -96,48 +114,18 @@ export default function Version2Home() {
             <p className="v2Kicker">Outerwear</p>
             <h2 style={title}>Материал говорит тише логотипа</h2>
           </div>
-          <a className="v2Link" href="/version2/shop/testgood">Смотреть →</a>
-        </div>
-      </section>
-
-      <section style={{ ...slideBase, zIndex: 3 }} aria-label="Raschini summer essentials">
-        <img
-          src={img('https://raschini.com/product/usxxv3021204bp/')}
-          alt="Летняя коллекция Raschini"
-          style={mediaBase}
-        />
-        <div style={shade} />
-        <div style={copy}>
-          <div>
-            <p className="v2Kicker">Summer essentials</p>
-            <h2 style={title}>Гардероб без лишнего усилия</h2>
-          </div>
-          <a className="v2Link" href="/version2/shop">Открыть →</a>
+          <a className="v2Link" href="/version2/shop/testgood">Смотреть вещь →</a>
         </div>
       </section>
 
       <section style={{ ...slideBase, zIndex: 4, background: '#b22318' }} aria-label="Raschini Su Misura">
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'grid',
-            placeItems: 'center',
-            padding: 24,
-            color: '#fff',
-            textAlign: 'center',
-          }}
-        >
+        <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', padding: 24, color: '#fff', textAlign: 'center' }}>
           <div style={{ maxWidth: 820 }}>
             <p className="v2Kicker">Su Misura · Napoli</p>
             <h2 style={{ ...title, maxWidth: 'none', fontSize: 'clamp(38px, 6vw, 86px)' }}>
               Вещь, созданная вокруг человека
             </h2>
-            <a
-              className="v2Link"
-              href="https://raschini.com/individualnyj-poshiv/"
-              style={{ marginTop: 30 }}
-            >
+            <a className="v2Link" href="https://raschini.com/individualnyj-poshiv/" style={{ marginTop: 30 }}>
               Индивидуальный пошив →
             </a>
           </div>
