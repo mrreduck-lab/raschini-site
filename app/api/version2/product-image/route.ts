@@ -3,7 +3,32 @@ import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  const driveId = request.nextUrl.searchParams.get('driveId');
   const productUrl = request.nextUrl.searchParams.get('url');
+
+  if (driveId) {
+    try {
+      const source = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(driveId)}`;
+      const image = await fetch(source, {
+        headers: { 'User-Agent': 'Mozilla/5.0 Raschini-Campaign/1.0' },
+        cache: 'force-cache',
+        redirect: 'follow',
+      });
+      const type = image.headers.get('content-type') || '';
+      if (!image.ok || !image.body || !type.startsWith('image/')) {
+        return NextResponse.redirect(new URL('/icons/icon-512.png', request.url));
+      }
+      return new NextResponse(image.body, {
+        headers: {
+          'Content-Type': type,
+          'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000',
+        },
+      });
+    } catch {
+      return NextResponse.redirect(new URL('/icons/icon-512.png', request.url));
+    }
+  }
+
   if (!productUrl) return new NextResponse('Missing url', { status: 400 });
 
   let parsed: URL;
