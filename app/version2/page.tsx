@@ -53,8 +53,8 @@ function CampaignSlide({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="v2SlideStage" aria-label={label}>
-      <div className="v2PinnedSlide" style={{ zIndex }}>{children}</div>
+    <section id={id} className="v2OverlaySlide" style={{ zIndex }} aria-label={label}>
+      {children}
     </section>
   );
 }
