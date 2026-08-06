@@ -3,14 +3,6 @@ const img = (url: string) =>
 const campaign = (driveId: string) =>
   `/api/version2/product-image?driveId=${encodeURIComponent(driveId)}`;
 
-const slideBase: React.CSSProperties = {
-  position: 'sticky',
-  top: 0,
-  height: '100svh',
-  overflow: 'hidden',
-  background: '#111',
-};
-
 const mediaBase: React.CSSProperties = {
   position: 'absolute',
   inset: 0,
@@ -49,9 +41,27 @@ const title: React.CSSProperties = {
   maxWidth: 760,
 };
 
+function CampaignSlide({
+  id,
+  zIndex,
+  label,
+  children,
+}: {
+  id?: string;
+  zIndex: number;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section id={id} className="v2SlideStage" aria-label={label}>
+      <div className="v2PinnedSlide" style={{ zIndex }}>{children}</div>
+    </section>
+  );
+}
+
 export default function Version2Home() {
   return (
-    <main className="v2">
+    <main className="v2 v2Home">
       <header className="v2Header">
         <nav className="v2Nav">
           <a href="/version2/shop">Мужчины</a>
@@ -66,76 +76,45 @@ export default function Version2Home() {
         </nav>
       </header>
 
-      <section style={{ ...slideBase, zIndex: 1 }} aria-label="Raschini Spring Summer 2026">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          src="/copy_5C18ACC9-0A1A-4565-92BA-0757C4EDB946.mp4"
-          style={mediaBase}
-        />
+      <CampaignSlide zIndex={1} label="Raschini Spring Summer 2026">
+        <video autoPlay muted loop playsInline preload="metadata" src="/copy_5C18ACC9-0A1A-4565-92BA-0757C4EDB946.mp4" style={mediaBase} />
         <div style={shade} />
         <div style={copy}>
-          <div>
-            <p className="v2Kicker">Spring Summer 2026</p>
-            <h1 style={title}>Сила спокойствия</h1>
-          </div>
+          <div><p className="v2Kicker">Spring Summer 2026</p><h1 style={title}>Сила спокойствия</h1></div>
           <a className="v2Link" href="/version2/shop">Открыть коллекцию →</a>
         </div>
-      </section>
+      </CampaignSlide>
 
-      <section id="collection" style={{ ...slideBase, zIndex: 2 }} aria-label="Новый кампейн Raschini">
-        <img
-          src={campaign('1pX4WhVK0_wXQmiEEiYcP7HZV7HIYFeq7')}
-          alt="Новый кампейн Raschini — мужской костюм у моря"
-          style={{ ...mediaBase, objectPosition: '50% 34%' }}
-        />
+      <CampaignSlide id="collection" zIndex={2} label="Новый кампейн Raschini">
+        <img src={campaign('1pX4WhVK0_wXQmiEEiYcP7HZV7HIYFeq7')} alt="Новый кампейн Raschini — мужской костюм у моря" style={{ ...mediaBase, objectPosition: '50% 34%' }} />
         <div style={shade} />
         <div style={copy}>
-          <div>
-            <p className="v2Kicker">New campaign · South of Italy</p>
-            <h2 style={title}>Классика, которой не нужно доказывать свой статус</h2>
-          </div>
+          <div><p className="v2Kicker">New campaign · South of Italy</p><h2 style={title}>Классика, которой не нужно доказывать свой статус</h2></div>
           <a className="v2Link" href="/version2/shop">Смотреть образы →</a>
         </div>
-      </section>
+      </CampaignSlide>
 
-      <section style={{ ...slideBase, zIndex: 3 }} aria-label="Raschini outerwear">
-        <img
-          src={img('https://raschini.com/product/usxxii2016109bp/')}
-          alt="Замшевая куртка Raschini"
-          style={mediaBase}
-        />
+      <CampaignSlide zIndex={3} label="Raschini outerwear">
+        <img src={img('https://raschini.com/product/usxxii2016109bp/')} alt="Замшевая куртка Raschini" style={mediaBase} />
         <div style={shade} />
         <div style={copy}>
-          <div>
-            <p className="v2Kicker">Outerwear</p>
-            <h2 style={title}>Материал говорит тише логотипа</h2>
-          </div>
+          <div><p className="v2Kicker">Outerwear</p><h2 style={title}>Материал говорит тише логотипа</h2></div>
           <a className="v2Link" href="/version2/shop/testgood">Смотреть вещь →</a>
         </div>
-      </section>
+      </CampaignSlide>
 
-      <section style={{ ...slideBase, zIndex: 4, background: '#b22318' }} aria-label="Raschini Su Misura">
-        <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', padding: 24, color: '#fff', textAlign: 'center' }}>
-          <div style={{ maxWidth: 820 }}>
+      <CampaignSlide zIndex={4} label="Raschini Su Misura">
+        <div className="v2SuMisuraSlide">
+          <div>
             <p className="v2Kicker">Su Misura · Napoli</p>
-            <h2 style={{ ...title, maxWidth: 'none', fontSize: 'clamp(38px, 6vw, 86px)' }}>
-              Вещь, созданная вокруг человека
-            </h2>
-            <a className="v2Link" href="https://raschini.com/individualnyj-poshiv/" style={{ marginTop: 30 }}>
-              Индивидуальный пошив →
-            </a>
+            <h2 style={{ ...title, maxWidth: 'none', fontSize: 'clamp(38px, 6vw, 86px)' }}>Вещь, созданная вокруг человека</h2>
+            <a className="v2Link" href="https://raschini.com/individualnyj-poshiv/" style={{ marginTop: 30 }}>Индивидуальный пошив →</a>
           </div>
         </div>
-      </section>
+      </CampaignSlide>
 
       <footer className="v2Footer" style={{ position: 'relative', zIndex: 5, background: '#f3efe7' }}>
-        <span>Москва · Неаполь</span>
-        <strong>RASCHINI</strong>
-        <span style={{ textAlign: 'right' }}>© 2026</span>
+        <span>Москва · Неаполь</span><strong>RASCHINI</strong><span style={{ textAlign: 'right' }}>© 2026</span>
       </footer>
     </main>
   );
