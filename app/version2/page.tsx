@@ -2,6 +2,8 @@ const img = (url: string) =>
   `/api/version2/product-image?url=${encodeURIComponent(url)}`;
 const campaign = (driveId: string) =>
   `/api/version2/product-image?driveId=${encodeURIComponent(driveId)}`;
+const campaignVideo = (driveId: string) =>
+  `/api/version2/product-image?driveId=${encodeURIComponent(driveId)}&media=1`;
 
 const mediaBase: React.CSSProperties = {
   position: 'absolute',
@@ -77,7 +79,10 @@ export default function Version2Home() {
       </header>
 
       <CampaignSlide zIndex={1} label="Raschini Spring Summer 2026">
-        <video autoPlay muted loop playsInline preload="metadata" src="/copy_5C18ACC9-0A1A-4565-92BA-0757C4EDB946.mp4" style={mediaBase} />
+        <video autoPlay muted loop playsInline preload="metadata" style={mediaBase}>
+          <source media="(min-width: 900px)" src={campaignVideo('1FD3MfnmlqCm_uJM8Ntma2l7ZWvEE1ujI')} type="video/mp4" />
+          <source src="/copy_5C18ACC9-0A1A-4565-92BA-0757C4EDB946.mp4" type="video/mp4" />
+        </video>
         <div style={shade} />
         <div style={copy}>
           <div><p className="v2Kicker">Spring Summer 2026</p><h1 style={title}>Сила спокойствия</h1></div>
