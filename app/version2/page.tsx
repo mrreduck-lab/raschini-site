@@ -12,7 +12,9 @@ export default function Version2Home(){
  return <main className="v2 v2Home">
   <header className="v2Header"><nav className="v2Nav"><a href="/version2/shop">Мужчины</a><a href="#collection">Коллекция</a><a href="https://raschini.com/individualnyj-poshiv/">Su Misura</a></nav><a className="v2Brand" href="/">RASCHINI</a><nav className="v2Tools"><a href="https://raschini.com/?s=">Поиск</a><a href="https://raschini.com/my-account/">Кабинет</a><a href="https://raschini.com/cart/">Корзина 0</a></nav></header>
   <CampaignSlide zIndex={1} label="Raschini Spring Summer 2026">
-   <video className="v2HeroVideo" autoPlay muted loop playsInline preload="auto" src="/copy_5C18ACC9-0A1A-4565-92BA-0757C4EDB946.mp4" style={mediaBase}/>
+   <img className="v2HeroPosterDesktop" src="/images/hero-poster.webp" alt="Raschini Spring Summer 2026" style={mediaBase}/>
+   <video className="v2HeroVideo v2HeroVideoDesktop" autoPlay muted loop playsInline preload="auto" poster="/images/hero-poster.webp" src="/video/hero-desktop.mp4" style={mediaBase}/>
+   <video className="v2HeroVideo v2HeroVideoMobile" autoPlay muted loop playsInline preload="metadata" poster="/images/hero-poster.webp" src="/video/hero-mobile.mp4" style={mediaBase}/>
    <div style={shade}/><div style={copy}><div><p className="v2Kicker">Spring Summer 2026</p><h1 style={title}>Сила спокойствия</h1></div><a className="v2Link" href="/version2/shop">Открыть коллекцию →</a></div>
   </CampaignSlide>
   <CampaignSlide id="collection" zIndex={2} label="Новый кампейн Raschini"><img src={campaign('1pX4WhVK0_wXQmiEEiYcP7HZV7HIYFeq7')} alt="Новый кампейн Raschini — мужской костюм у моря" style={{...mediaBase,objectPosition:'50% 34%'}}/><div style={shade}/><div style={copy}><div><p className="v2Kicker">New campaign · South of Italy</p><h2 style={title}>Классика, которой не нужно доказывать свой статус</h2></div><a className="v2Link" href="/version2/shop">Смотреть образы →</a></div></CampaignSlide>
