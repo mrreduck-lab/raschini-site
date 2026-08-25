@@ -79,10 +79,26 @@ export default function Version2Home() {
       </header>
 
       <CampaignSlide zIndex={1} label="Raschini Spring Summer 2026">
-        <video autoPlay muted loop playsInline preload="metadata" style={mediaBase}>
-          <source media="(min-width: 900px)" src={campaignVideo('1FD3MfnmlqCm_uJM8Ntma2l7ZWvEE1ujI')} type="video/mp4" />
-          <source src="/copy_5C18ACC9-0A1A-4565-92BA-0757C4EDB946.mp4" type="video/mp4" />
-        </video>
+        <video
+          className="v2HeroVideo v2HeroVideoDesktop"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          src={campaignVideo('1FD3MfnmlqCm_uJM8Ntma2l7ZWvEE1ujI')}
+          style={mediaBase}
+        />
+        <video
+          className="v2HeroVideo v2HeroVideoMobile"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          src="/copy_5C18ACC9-0A1A-4565-92BA-0757C4EDB946.mp4"
+          style={mediaBase}
+        />
         <div style={shade} />
         <div style={copy}>
           <div><p className="v2Kicker">Spring Summer 2026</p><h1 style={title}>Сила спокойствия</h1></div>
