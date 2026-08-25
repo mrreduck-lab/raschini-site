@@ -20,16 +20,25 @@ export async function GET(request: NextRequest) {
         redirect: 'follow',
       });
 
-      const type = upstream.headers.get('content-type') || '';
-      const isAllowedType = media ? type.startsWith('video/') : type.startsWith('image/');
+      const upstreamType = upstream.headers.get('content-type') || '';
+      const isHtml = upstreamType.includes('text/html');
+      const isAllowedType = media
+        ? !isHtml
+        : upstreamType.startsWith('image/');
+
       if (!upstream.ok || !upstream.body || !isAllowedType) {
         if (media) return new NextResponse('Media unavailable', { status: 502 });
         return NextResponse.redirect(new URL('/icons/icon-512.png', request.url));
       }
 
       const headers = new Headers();
-      headers.set('Content-Type', type);
-      headers.set('Cache-Control', media ? 'public, max-age=3600, s-maxage=86400' : 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000');
+      headers.set('Content-Type', media ? 'video/mp4' : upstreamType);
+      headers.set(
+        'Cache-Control',
+        media
+          ? 'public, max-age=3600, s-maxage=86400'
+          : 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000',
+      );
 
       for (const name of ['content-range', 'content-length', 'accept-ranges', 'etag', 'last-modified']) {
         const value = upstream.headers.get(name);
