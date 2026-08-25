@@ -4,27 +4,45 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   const driveId = request.nextUrl.searchParams.get('driveId');
+  const media = request.nextUrl.searchParams.get('media') === '1';
   const productUrl = request.nextUrl.searchParams.get('url');
 
   if (driveId) {
     try {
-      const source = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(driveId)}`;
-      const image = await fetch(source, {
-        headers: { 'User-Agent': 'Mozilla/5.0 Raschini-Campaign/1.0' },
-        cache: 'force-cache',
+      const source = `https://drive.usercontent.google.com/download?id=${encodeURIComponent(driveId)}&export=download&confirm=t`;
+      const range = request.headers.get('range');
+      const upstream = await fetch(source, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 Raschini-Campaign/1.0',
+          ...(range ? { Range: range } : {}),
+        },
+        cache: media ? 'no-store' : 'force-cache',
         redirect: 'follow',
       });
-      const type = image.headers.get('content-type') || '';
-      if (!image.ok || !image.body || !type.startsWith('image/')) {
+
+      const type = upstream.headers.get('content-type') || '';
+      const isAllowedType = media ? type.startsWith('video/') : type.startsWith('image/');
+      if (!upstream.ok || !upstream.body || !isAllowedType) {
+        if (media) return new NextResponse('Media unavailable', { status: 502 });
         return NextResponse.redirect(new URL('/icons/icon-512.png', request.url));
       }
-      return new NextResponse(image.body, {
-        headers: {
-          'Content-Type': type,
-          'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000',
-        },
+
+      const headers = new Headers();
+      headers.set('Content-Type', type);
+      headers.set('Cache-Control', media ? 'public, max-age=3600, s-maxage=86400' : 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000');
+
+      for (const name of ['content-range', 'content-length', 'accept-ranges', 'etag', 'last-modified']) {
+        const value = upstream.headers.get(name);
+        if (value) headers.set(name, value);
+      }
+      if (media && !headers.has('accept-ranges')) headers.set('Accept-Ranges', 'bytes');
+
+      return new NextResponse(upstream.body, {
+        status: upstream.status,
+        headers,
       });
     } catch {
+      if (media) return new NextResponse('Media unavailable', { status: 502 });
       return NextResponse.redirect(new URL('/icons/icon-512.png', request.url));
     }
   }
