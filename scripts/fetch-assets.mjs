@@ -11,6 +11,10 @@ const assets = [
     path: 'public/video/hero-mobile.mp4',
   },
   {
+    id: '1sG1bDysUDgVMVvIJWq_hoPirojsFk3jx',
+    path: 'public/video/hero-desktop.mp4',
+  },
+  {
     id: '1Y6B4SX8eGoAeXg5CpJUZI2kziu_Ewcwg',
     path: 'public/images/hero-poster.webp',
   },
