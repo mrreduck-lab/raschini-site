@@ -62,6 +62,8 @@ function CampaignSlide({
 }
 
 export default function Version2Home() {
+  const desktopPoster = campaign('1Y6B4SX8eGoAeXg5CpJUZI2kziu_Ewcwg');
+
   return (
     <main className="v2 v2Home">
       <header className="v2Header">
@@ -79,13 +81,20 @@ export default function Version2Home() {
       </header>
 
       <CampaignSlide zIndex={1} label="Raschini Spring Summer 2026">
+        <img
+          className="v2HeroPosterDesktop"
+          src={desktopPoster}
+          alt="Raschini Spring Summer 2026"
+          style={mediaBase}
+        />
         <video
           className="v2HeroVideo v2HeroVideoDesktop"
           autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
+          poster={desktopPoster}
           src={campaignVideo('1FD3MfnmlqCm_uJM8Ntma2l7ZWvEE1ujI')}
           style={mediaBase}
         />
