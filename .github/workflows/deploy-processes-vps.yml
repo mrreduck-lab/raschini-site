@@ -27,11 +27,10 @@ jobs:
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: 159.194.216.114
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          port: ${{ secrets.VPS_PORT || 22 }}
+          username: ${{ secrets.VPS_USER || secrets.DEPLOY_USER }}
+          key: ${{ secrets.VPS_SSH_KEY || secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || secrets.DEPLOY_PORT || 22 }}
           command_timeout: 18m
-          script_stop: true
           script: |
             set -e
             APP_DIR=/opt/raschini-site
