@@ -1,0 +1,52 @@
+name: Deploy Marketing Processes to VPS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "app/processes/**"
+
+concurrency:
+  group: raschini-processes-production
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Deploy isolated Next.js process
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: 159.194.216.114
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          command_timeout: 18m
+          script_stop: true
+          script: |
+            set -e
+            APP_DIR=/opt/raschini-site
+            if [ ! -d "$APP_DIR/.git" ]; then
+              git clone https://github.com/mrreduck-lab/raschini-site.git "$APP_DIR"
+            fi
+            cd "$APP_DIR"
+            git checkout main
+            git pull --ff-only origin main
+            npm install
+            npx next build
+            if pm2 describe raschini-processes >/dev/null 2>&1; then
+              pm2 restart raschini-processes --update-env
+            else
+              pm2 start npm --name raschini-processes -- start -- -p 3002
+            fi
+            pm2 save
+            curl --fail --silent --show-error http://127.0.0.1:3002/processes/marketing >/dev/null
