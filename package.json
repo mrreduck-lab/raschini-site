@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/fetch-assets.mjs && next build",
+    "assets:fetch": "node scripts/fetch-assets.mjs",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
