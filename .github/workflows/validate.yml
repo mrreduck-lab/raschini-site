@@ -1,6 +1,7 @@
 name: Validate Raschini Site
 
 on:
+  workflow_call:
   push:
     branches: [main]
   workflow_dispatch:
