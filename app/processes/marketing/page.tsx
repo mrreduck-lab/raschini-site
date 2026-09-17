@@ -96,14 +96,22 @@ export default function MarketingProcessesPage() {
       <section className={styles.canvas} aria-label={stage?stage.title:"Общий процесс"}>
         <div className={styles.canvasHead}><div><span>{stage?"РАСКРЫТЫЙ ПОДПРОЦЕСС":"ОБЩАЯ BPMN-КАРТА"}</span><h2>{stage?.title??"От стратегии до следующего месяца"}</h2><p>{stage?.summary??"Нажмите на блок с «＋ раскрыть», чтобы перейти к конкретным действиям."}</p></div><span className={styles.count}>{steps.length} элементов</span></div>
         <div className={styles.diagram}>
-          {steps.map((step,index)=><div key={step.id} className={styles.nodeRow}>
+          {steps.map((step,index)=>{
+            if(index>0&&(steps[index-1].type==="parallel"||steps[index-2]?.type==="parallel")) return null;
+            const fork=step.type==="parallel";
+            return <div key={step.id} className={styles.nodeRow}>
             <div className={styles.lane}>{step.role}</div>
             <div className={styles.nodeColumn}>
-              <Shape item={step} active={selected.id===step.id} expand={!stage&&stages.some(s=>s.id===step.id)} click={()=>{setSelectedId(step.id)}}/>
-              {step.branches&&<div className={styles.branches}>{step.branches.map(b=><span key={b}>{b}</span>)}</div>}
+              <Shape item={step} active={selected.id===step.id} expand={!stage&&stages.some(s=>s.id===step.id)} click={()=>{if(!stage&&stages.some(s=>s.id===step.id)) enter(step.id); else setSelectedId(step.id)}}/>
+              {fork?<div className={styles.fork}>
+                {steps.slice(index+1,index+3).map((branch,i)=><div className={styles.forkChild} key={branch.id}>
+                  <span className={styles.forkLabel}>{step.branches?.[i]}</span>
+                  <Shape item={branch} active={selected.id===branch.id} click={()=>setSelectedId(branch.id)}/>
+                </div>)}
+              </div>:step.branches&&<div className={styles.branches}>{step.branches.map(b=><span key={b}>{b}</span>)}</div>}
               {index<steps.length-1&&<div className={styles.connector} aria-hidden="true">↓</div>}
             </div>
-          </div>)}
+          </div>})}
           {!stage&&<div className={styles.returnFlow}>↺ Решения возвращаются к планированию месяца; пересмотр стратегии — к стратегии.</div>}
         </div>
         <div className={styles.legend}><span>◯ событие</span><span>▢ действие / подпроцесс ＋</span><span>◇ шлюз × — выбор</span><span>◇ шлюз ＋ — параллельные ветки</span></div>
