@@ -2,10 +2,6 @@ name: Deploy Marketing Processes to VPS
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "app/processes/**"
 
 concurrency:
   group: raschini-processes-production
