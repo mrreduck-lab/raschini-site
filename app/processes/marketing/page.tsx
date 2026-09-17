@@ -1,137 +1,122 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import styles from "./page.module.css";
 
-type DocLink = { label: string; url: string };
-type Item = {
-  id: string;
-  title: string;
-  subtitle: string;
-  owner: string;
-  purpose: string;
-  rules: string[];
-  docs?: DocLink[];
+type Doc = { label: string; url: string; status?: string };
+type Step = {
+  id: string; title: string; role: string; action: string; output: string;
+  docs?: Doc[]; type?: "event" | "gateway" | "parallel" | "end";
+  branches?: string[];
 };
+type Stage = { id: string; title: string; role: string; summary: string; steps: Step[] };
 
-const driveFolder = "https://drive.google.com/drive/folders/1pkN1pejSe1Y6_MHMoIwllIeQOOrAnpPx";
-const processRules = "https://docs.google.com/document/d/11V3uDw2dIn9WMyK6XPbro64yM37vpvMChWjZWOwwJOo/edit";
+const folder = "https://drive.google.com/drive/folders/1pkN1pejSe1Y6_MHMoIwllIeQOOrAnpPx";
+const rules = "https://docs.google.com/document/d/11V3uDw2dIn9WMyK6XPbro64yM37vpvMChWjZWOwwJOo/edit";
 const instruction = "https://docs.google.com/document/d/15mtKqY3jfdHK7uEY3tgScw730WT0Qhc94XvhH923TFY/edit";
 const budget = "https://docs.google.com/spreadsheets/d/1V1GiCOuRp3qecUxt6T8xG3p9ExIveFrThuvDsTX6XmE/edit";
 const plan = "https://docs.google.com/spreadsheets/d/1w0ku7FxFU8AlI45-6U-kqO0RDQFx7qAqmG8UsjjsZQU/edit";
 const august = "https://docs.google.com/spreadsheets/d/1cgDWYhKFcLufiE-1BRyn_LSj9K_B1V8Zi45CeIkUOuU/edit";
+const doc = (label: string, url: string, status?: string): Doc => ({ label, url, status });
 
-const hierarchy: { level: string; items: Item[] }[] = [
-  { level: "1. Бизнес-контекст", items: [
-    { id: "business", title: "Бизнес-цели и план продаж", subtitle: "Выручка, маржа, клиенты, бутики", owner: "CEO / коммерческий блок", purpose: "Определяет коммерческие цели, которые должен поддержать маркетинг.", rules: ["Вход для стратегии", "Используется в финальном отчёте"] },
-    { id: "assortment", title: "План ассортимента и поставок", subtitle: "Коллекции и коммерческие поводы", owner: "Коммерческий блок / продукт", purpose: "Определяет товары и сроки, которые поддерживает маркетинг.", rules: ["Вход для календаря", "Основа контентных поводов"] }
+const stages: Stage[] = [
+  { id:"strategy", title:"Стратегия", role:"Директор по маркетингу / CEO", summary:"Определить цели, аудитории, позиционирование, каналы и критерии результата.", steps:[
+    {id:"context",title:"Собрать бизнес-контекст",role:"Директор по маркетингу",action:"Получить цели продаж, ассортимент и результаты прошлого периода; выделить ограничения и возможности.",output:"Входные данные и гипотезы для стратегии."},
+    {id:"draft",title:"Разработать стратегию",role:"Директор по маркетингу",action:"Описать аудитории, продуктовые приоритеты, позиционирование, каналы, KPI и правила оценки.",output:"Проект стратегии. Ссылка появится после создания документа.",docs:[doc("Папка процессов",folder,"Стратегия пока не создана")]},
+    {id:"approve",title:"Утвердить стратегию?",role:"CEO",action:"Проверить связь с бизнес-целями и распределение ресурсов.",output:"Утверждённая версия или список правок.",type:"gateway",branches:["Да → бюджет и календарь","Нет → доработать стратегию"]}
   ]},
-  { level: "2. Стратегия", items: [
-    { id: "strategy", title: "Маркетинговая стратегия", subtitle: "Аудитории, позиционирование, каналы, KPI", owner: "Директор по маркетингу; утверждает CEO", purpose: "Задаёт выбор аудиторий, каналов, целей и критериев эффективности.", rules: ["Пересмотр ежеквартально", "Определяет бюджет и календарь"] }
+  { id:"annual", title:"Бюджет и календарь", role:"Маркетинг / финансы / CEO", summary:"Перевести стратегию в лимиты, проекты, сроки и KPI.", steps:[
+    {id:"limits",title:"Собрать бюджет",role:"Директор по маркетингу + финансы",action:"Разнести плановые суммы и оплаты по статьям и месяцам; согласовать лимиты.",output:"Проект бюджета.",docs:[doc("Открыть бюджет",budget)]},
+    {id:"calendar",title:"Составить календарь",role:"Директор по маркетингу",action:"Для каждой активности указать ID проекта, дату, цель, KPI, ответственного и плановый бюджет.",output:"Сводный календарь проектов.",docs:[doc("Пример маркетингового плана",plan,"Пример, не действующий календарь"),doc("Инструкция к плану",instruction)]},
+    {id:"planApproval",title:"План утверждён?",role:"CEO",action:"Согласовать календарь и бюджет как базовую версию.",output:"Утверждённый план или правки.",type:"gateway",branches:["Да → планировать месяц","Нет → вернуть на корректировку"]}
   ]},
-  { level: "3. Планирование", items: [
-    { id: "budget", title: "Маркетинговый бюджет", subtitle: "Лимиты и план оплат по месяцам", owner: "Маркетинг + финансы; утверждает CEO", purpose: "Хранит утверждённые лимиты и план оплат.", rules: ["План-факт по месяцу оплаты", "Сверка с календарём"], docs: [{label:"Открыть бюджет",url:budget}] },
-    { id: "calendar", title: "Маркетинговый календарь", subtitle: "Проекты, KPI, сроки и единый ID", owner: "Директор по маркетингу", purpose: "Единый реестр утверждённых проектов и активностей.", rules: ["Каждому проекту присваивается ID", "Месячный файл задач не создаётся"], docs: [{label:"Открыть план",url:plan},{label:"Открыть инструкцию",url:instruction}] }
+  { id:"month",title:"Планирование месяца",role:"Директор по маркетингу / команда",summary:"Уточнить проекты и разбить их на исполнимые задачи.",steps:[
+    {id:"prioritize",title:"Уточнить проекты месяца",role:"Директор по маркетингу",action:"Выбрать проекты из календаря, проверить сроки, сумму, KPI и единый ID.",output:"Согласованный набор проектов месяца.",docs:[doc("Пример плана",plan,"Шаблон для действующего календаря")]},
+    {id:"tasks",title:"Назначить задачи",role:"Владелец проекта",action:"Записать действие, исполнителя, срок и результат в единый реестр; использовать фильтр по месяцу.",output:"Задачи со сроками и ответственными.",docs:[doc("Пример структуры задач",plan,"Шаблон"),doc("Инструкция",instruction)]},
+    {id:"ready",title:"Ресурсы готовы?",role:"Директор по маркетингу",action:"Проверить материалы, подрядчиков, согласования и доступный лимит.",output:"Допуск к запуску или список блокеров.",type:"gateway",branches:["Да → реализация","Нет → скорректировать задачи"]}
   ]},
-  { level: "4. Исполнение", items: [
-    { id: "tasks", title: "Единый реестр задач", subtitle: "Исполнитель, дедлайн, статус", owner: "Маркетинговая команда", purpose: "Декомпозирует проекты на конкретные действия.", rules: ["Одна задача — одна строка", "Месяц отображается фильтром"], docs: [{label:"Открыть план",url:plan},{label:"Открыть инструкцию",url:instruction}] },
-    { id: "projects", title: "Планы крупных проектов", subtitle: "Съёмки, показы и мероприятия", owner: "Владелец проекта", purpose: "Детализирует сложные проекты без дублирования календаря.", rules: ["Связь по ID проекта", "В календаре одна агрегированная строка"] }
+  { id:"execute",title:"Реализация",role:"Маркетинговая команда",summary:"Выполнить публикации, кампании, CRM-коммуникации и мероприятия.",steps:[
+    {id:"brief",title:"Подготовить проект",role:"Владелец проекта",action:"Утвердить бриф, материалы, площадку и измеримые метки проекта.",output:"Готовый к запуску проект и ID."},
+    {id:"launch",title:"Запустить активность",role:"Исполнитель",action:"Опубликовать или провести мероприятие; сохранить фактические даты и ссылки.",output:"Публикация, кампания или мероприятие."},
+    {id:"check",title:"Проверить исполнение",role:"Владелец проекта",action:"Сверить факт с планом и зафиксировать отклонения.",output:"Статус проекта и перечень корректировок."}
   ]},
-  { level: "5. Фактические данные", items: [
-    { id: "activity", title: "Проекты и активности", subtitle: "Охват, трафик, лиды, покупки", owner: "Маркетинг / SMM / PR / CRM", purpose: "Хранит фактические результаты каждого мероприятия.", rules: ["Отдельно от финансового реестра", "Связь с расходами по ID"], docs: [{label:"Открыть отчёт",url:august}] },
-    { id: "expense", title: "Маркетинговые расходы", subtitle: "Дата расхода, дата оплаты, сумма, ID", owner: "Финансы / маркетинг", purpose: "Хранит первичный финансовый факт по каждой операции.", rules: ["Учёт расходов — по дате расхода", "ДРР/ROMI месяца — по дате оплаты", "Проект — полная сумма независимо от периода"], docs: [{label:"Открыть отчёт",url:august},{label:"Открыть бюджет",url:budget}] },
-    { id: "systems", title: "1С, RetailCRM и digital", subtitle: "Подтверждённые источники факта", owner: "Владельцы систем", purpose: "Поставляет выручку, клиентов, обращения, визиты и digital-метрики.", rules: ["1С — выручка и оплаты", "RetailCRM — клиенты и коммуникации"] }
+  { id:"fact",title:"Сбор факта",role:"Финансы / маркетинг / аналитика",summary:"Два параллельных потока данных соединяются по ID проекта.",steps:[
+    {id:"split",title:"Параллельно собрать факт",role:"Маркетинг + финансы",action:"После запуска открыть финансовую и результативную ветки.",output:"Два потока первичных данных.",type:"parallel",branches:["Расходы и оплаты","Активности и продажи"]},
+    {id:"expense",title:"Внести расход и оплату",role:"Финансы + маркетинг",action:"Для каждой операции записать ID проекта, сумму, статью, дату расхода и дату оплаты отдельно.",output:"Реестр расходов по дате расхода и оплат по дате оплаты.",docs:[doc("Августовский отчёт: лист расходов",august,"Действующий файл требует сверки"),doc("Бюджет",budget)]},
+    {id:"result",title:"Внести результат активности",role:"Маркетинг + аналитика",action:"По ID проекта записать дату публикации, охват, обращения, визиты, покупки и подтверждённую выручку.",output:"Реестр активностей, связанный с расходами по ID.",docs:[doc("Августовский отчёт: активности",august,"Действующий файл требует сверки")]},
+    {id:"join",title:"Данные сведены?",role:"Директор по маркетингу",action:"Проверить ID, периоды, подтверждение продаж и полноту двух потоков.",output:"Проверенная основа для аналитики.",type:"gateway",branches:["Да → анализ","Нет → вернуть на дозаполнение"]}
   ]},
-  { level: "6. Аналитика и отчёт", items: [
-    { id: "projectAnalysis", title: "Анализ проекта", subtitle: "Полная стоимость независимо от периода", owner: "Директор по маркетингу", purpose: "Сопоставляет результаты со всеми расходами проекта.", rules: ["Группировка по ID", "Решение: повторить, изменить или остановить"], docs: [{label:"Открыть отчёт",url:august}] },
-    { id: "monthly", title: "Месячный отчёт", subtitle: "ДРР/ROMI по датам оплаты", owner: "Директор по маркетингу", purpose: "Показывает финансовую эффективность закрытого месяца.", rules: ["Расходы по дате оплаты", "План-факт бюджета"], docs: [{label:"Открыть отчёт",url:august}] },
-    { id: "dashboard", title: "Финальный лист «Показатели»", subtitle: "Главный экран CEO", owner: "Директор по маркетингу", purpose: "Сводит план, факт, динамику, ДРР/ROMI и выводы.", rules: ["Не хранит первичный факт", "Каждый KPI прослеживается до источника"], docs: [{label:"Открыть отчёт",url:august}] }
+  { id:"analysis",title:"Два вида анализа",role:"Директор по маркетингу",summary:"Месяц и отдельный проект используют разные правила отнесения расходов.",steps:[
+    {id:"analysisSplit",title:"Рассчитать два среза",role:"Директор по маркетингу",action:"Параллельно подготовить месячный итог и анализ проектов.",output:"Две несмешиваемые аналитические выборки.",type:"parallel",branches:["Месяц → по оплатам","Проект → все затраты"]},
+    {id:"monthly",title:"Месячный ДРР / ROMI",role:"Директор по маркетингу",action:"Для свода взять оплаты с датой в отчётном месяце и соответствующую маркетинговую выручку; указать определение ROMI.",output:"Месячные показатели, план-факт и дата среза.",docs:[doc("Отчёт за август",august,"Методология и формулы требуют сверки"),doc("Бюджет",budget)]},
+    {id:"project",title:"Анализ проекта",role:"Владелец проекта",action:"Сложить все расходы по ID мероприятия или публикации независимо от месяца расхода и оплаты; сопоставить с результатами.",output:"Полная стоимость проекта и вывод о результате.",docs:[doc("Отчёт за август",august,"Проектную карточку предстоит оформить")]},
+    {id:"consolidate",title:"Сверить оба среза",role:"Директор по маркетингу",action:"Сопоставить план-факт, исключить дубли и пояснить расхождения во времени.",output:"Основание для финального листа."}
   ]},
-  { level: "7. Решения", items: [
-    { id: "decision", title: "Протокол управленческих решений", subtitle: "Продолжить, изменить, остановить", owner: "CEO + директор по маркетингу", purpose: "Фиксирует решение, ответственного, срок и ожидаемый эффект.", rules: ["Обновляет календарь и задачи", "Корректирует прогноз бюджета"] },
-    { id: "revision", title: "Квартальный пересмотр стратегии", subtitle: "Проверка ключевых гипотез", owner: "CEO + директор по маркетингу", purpose: "Обновляет стратегию при подтверждённом изменении условий.", rules: ["Стратегия версионируется", "Новая версия влияет на бюджет"] }
+  { id:"report",title:"Отчёт и решение",role:"Директор по маркетингу / CEO",summary:"Закрыть месяц, принять решения и обновить план следующего цикла.",steps:[
+    {id:"dashboard",title:"Собрать финальный лист",role:"Директор по маркетингу",action:"Вывести план, факт, динамику, ДРР/ROMI, выводы и ссылки на источники. Указать период и дату актуальности.",output:"Финальный лист «Показатели».",docs:[doc("Отчёт за август",august,"Исходная версия требует исправлений")]},
+    {id:"review",title:"Разобрать результаты",role:"CEO + директор по маркетингу",action:"Выбрать проекты для продолжения, изменения или остановки; записать владельца решения и срок.",output:"Протокол решений."},
+    {id:"change",title:"Менять стратегию?",role:"CEO",action:"Определить, достаточно ли обновить тактический план или нужен пересмотр стратегии.",output:"Направление следующего цикла.",type:"gateway",branches:["Нет → обновить бюджет и календарь месяца","Да → квартальный пересмотр стратегии"]},
+    {id:"next",title:"Следующий цикл",role:"Директор по маркетингу",action:"Перенести утверждённые изменения в общий календарь и задачи.",output:"План следующего месяца.",type:"end",docs:[doc("Папка документов",folder)]}
   ]}
 ];
 
-const process: Item[] = [
-  {id:"context",title:"Анализ контекста",subtitle:"Годовой старт",owner:"Директор по маркетингу",purpose:"Свод целей, продаж, клиентов и результатов прошлого периода.",rules:["Результат — основания для стратегии"]},
-  {id:"strategyProcess",title:"Разработка стратегии",subtitle:"Стратегическая задача",owner:"Директор по маркетингу",purpose:"Формирование аудиторий, позиционирования, каналов и KPI.",rules:["Передаётся CEO на утверждение"]},
-  {id:"approveStrategy",title:"Стратегия утверждена?",subtitle:"BPMN-шлюз",owner:"CEO",purpose:"Контрольная точка до распределения ресурсов.",rules:["Нет — вернуть на доработку","Да — перейти к бюджету"]},
-  {id:"budgetPlan",title:"Бюджет и календарь",subtitle:"Годовое планирование",owner:"Директор по маркетингу",purpose:"Перевод стратегии в ресурсы, проекты, KPI и сроки.",rules:["Единый ID проекта обязателен"],docs:[{label:"Бюджет",url:budget},{label:"План",url:plan}]},
-  {id:"approvePlan",title:"План утверждён?",subtitle:"BPMN-шлюз",owner:"CEO",purpose:"Фиксация базовой версии бюджета и разрешённых активностей.",rules:["Нет — корректировка","Да — запуск месячного цикла"]},
-  {id:"monthPlan",title:"Планирование месяца",subtitle:"Повторяющийся цикл",owner:"Директор по маркетингу",purpose:"Уточнение проектов, сумм, KPI и сроков.",rules:["Отдельный месячный файл не нужен"],docs:[{label:"Открыть план",url:plan}]},
-  {id:"execute",title:"Задачи и реализация",subtitle:"Исполнение",owner:"Маркетинговая команда",purpose:"Проекты раскладываются на задачи и выполняются.",rules:["Статусы ведутся в едином реестре"],docs:[{label:"Открыть план",url:plan}]},
-  {id:"facts",title:"Два потока факта",subtitle:"Параллельный шлюз",owner:"Финансы + аналитика",purpose:"Одновременно фиксируются расходы/оплаты и маркетинговые результаты.",rules:["Обе ветки связывает ID проекта"],docs:[{label:"Открыть отчёт",url:august}]},
-  {id:"calculate",title:"Два аналитических среза",subtitle:"Расчёт",owner:"Директор по маркетингу",purpose:"Месячный ДРР/ROMI по оплате и полная эффективность проекта.",rules:["Период и дата актуальности обязательны"],docs:[{label:"Открыть отчёт",url:august}]},
-  {id:"review",title:"Управленческий разбор",subtitle:"Ежемесячное событие",owner:"CEO + директор по маркетингу",purpose:"Решения по бюджету, каналам и проектам.",rules:["Тактика возвращается в месячный цикл","Стратегические вопросы — в квартальный пересмотр"]}
+const overview: Step[] = [
+  {id:"start",title:"Начало цикла",role:"CEO",action:"Установить цели и ограничения.",output:"Вход для стратегии.",type:"event"},
+  ...stages.map(s=>({id:s.id,title:s.title,role:s.role,action:s.summary,output:"Открыть подпроцесс и выполнить шаги."})),
+  {id:"loop",title:"Следующий месяц",role:"Маркетинг",action:"С учётом решений повторить месячный цикл.",output:"Обновлённый план.",type:"end"}
 ];
 
-const roles = ["Все","CEO","Директор по маркетингу","Маркетинговая команда","Финансы + аналитика"];
+function Shape({item,active,click,expand}:{item:Step;active:boolean;click:()=>void;expand?:boolean}) {
+  const cls = [styles.shape, item.type==="gateway"?styles.gateway:"",item.type==="parallel"?styles.parallel:"",item.type==="event"||item.type==="end"?styles.event:"",active?styles.selected:""].filter(Boolean).join(" ");
+  return <button type="button" onClick={click} className={cls} aria-pressed={active}>
+    {item.type==="gateway"?<span className={styles.symbol}>×</span>:item.type==="parallel"?<span className={styles.symbol}>＋</span>:null}
+    <strong>{item.title}</strong>
+    <small>{item.role}</small>
+    {expand&&<span className={styles.expand}>＋ раскрыть</span>}
+  </button>;
+}
 
 export default function MarketingProcessesPage() {
-  const [tab,setTab]=useState<"docs"|"process">("docs");
-  const [selected,setSelected]=useState<Item>(hierarchy[0].items[0]);
-  const [role,setRole]=useState("Все");
-  const visibleProcess=useMemo(()=>process.filter(item=>role==="Все"||item.owner.includes(role.replace("Маркетинговая ",""))),[role]);
-
+  const [stageId,setStageId]=useState<string|null>(null);
+  const [selectedId,setSelectedId]=useState("start");
+  const stage=stages.find(s=>s.id===stageId);
+  const steps=stage?.steps??overview;
+  const selected=steps.find(s=>s.id===selectedId)??steps[0];
+  const enter=(id:string)=>{setStageId(id);setSelectedId(stages.find(s=>s.id===id)?.steps[0].id??"start")};
+  const leave=()=>{setStageId(null);setSelectedId(stageId??"start")};
   return <main className={styles.page}>
     <header className={styles.header}>
-      <p className={styles.eyebrow}>RASCHINI · УПРАВЛЕНИЕ МАРКЕТИНГОМ</p>
-      <h1>Карта процессов и документов</h1>
-      <p>Единая навигация от стратегии и бюджета до расходов, результатов и управленческих решений.</p>
-      <nav className={styles.quick}>
-        <a href={driveFolder} target="_blank" rel="noreferrer">Папка Google Drive ↗</a>
-        <a href={processRules} target="_blank" rel="noreferrer">Регламент процессов ↗</a>
-        <a href={instruction} target="_blank" rel="noreferrer">Инструкция ↗</a>
-        <a href={budget} target="_blank" rel="noreferrer">Бюджет ↗</a>
-        <a href={plan} target="_blank" rel="noreferrer">План ↗</a>
-        <a href={august} target="_blank" rel="noreferrer">Отчёт ↗</a>
-      </nav>
+      <p className={styles.kicker}>RASCHINI / ПРОЦЕССЫ</p>
+      <h1>Управление маркетингом</h1>
+      <p>Идите по схеме: откройте подпроцесс, выберите действие и перейдите к его документу.</p>
+      <nav className={styles.links}><a href={folder} target="_blank" rel="noreferrer">Папка документов ↗</a><a href={rules} target="_blank" rel="noreferrer">Регламент ↗</a><a href="/processes/marketing-management.bpmn" download>Исходная BPMN 2.0 ↧</a></nav>
     </header>
-
-    <div className={styles.tabs}>
-      <button className={tab==="docs"?styles.active:""} onClick={()=>setTab("docs")}>Иерархия документов</button>
-      <button className={tab==="process"?styles.active:""} onClick={()=>setTab("process")}>BPMN-процесс</button>
-    </div>
-
-    <section className={styles.workspace}>
-      <div className={styles.canvas}>
-        {tab==="docs" ? <div className={styles.hierarchy}>
-          {hierarchy.map((group,index)=><div className={styles.levelWrap} key={group.level}>
-            <div className={styles.level}>
-              <span>{group.level}</span>
-              <div className={styles.cards}>{group.items.map(item=><button key={item.id} onClick={()=>setSelected(item)} className={selected.id===item.id?styles.selected:""}>
-                <strong>{item.title}{item.docs?" ↗":""}</strong><small>{item.subtitle}</small>
-              </button>)}</div>
+    <div className={styles.breadcrumb}><button onClick={leave} disabled={!stage}>Общий процесс</button>{stage&&<><span>›</span><strong>{stage.title}</strong></>}</div>
+    <div className={styles.layout}>
+      <section className={styles.canvas} aria-label={stage?stage.title:"Общий процесс"}>
+        <div className={styles.canvasHead}><div><span>{stage?"РАСКРЫТЫЙ ПОДПРОЦЕСС":"ОБЩАЯ BPMN-КАРТА"}</span><h2>{stage?.title??"От стратегии до следующего месяца"}</h2><p>{stage?.summary??"Нажмите на блок с «＋ раскрыть», чтобы перейти к конкретным действиям."}</p></div><span className={styles.count}>{steps.length} элементов</span></div>
+        <div className={styles.diagram}>
+          {steps.map((step,index)=><div key={step.id} className={styles.nodeRow}>
+            <div className={styles.lane}>{step.role}</div>
+            <div className={styles.nodeColumn}>
+              <Shape item={step} active={selected.id===step.id} expand={!stage&&stages.some(s=>s.id===step.id)} click={()=>{setSelectedId(step.id)}}/>
+              {step.branches&&<div className={styles.branches}>{step.branches.map(b=><span key={b}>{b}</span>)}</div>}
+              {index<steps.length-1&&<div className={styles.connector} aria-hidden="true">↓</div>}
             </div>
-            {index<hierarchy.length-1&&<div className={styles.arrow}>↓</div>}
           </div>)}
-        </div> : <div className={styles.process}>
-          <div className={styles.processToolbar}><span>BPMN: последовательность, шлюзы и повторяющийся цикл</span><select value={role} onChange={e=>setRole(e.target.value)}>{roles.map(r=><option key={r}>{r}</option>)}</select></div>
-          <div className={styles.swimlanes}>
-            {visibleProcess.map((item,index)=><div className={styles.stepWrap} key={item.id}>
-              <button onClick={()=>setSelected(item)} className={(selected.id===item.id?styles.selected+" ":"")+(item.subtitle.includes("шлюз")?styles.gateway:"")}>
-                <span className={styles.stepNo}>{index+1}</span><strong>{item.title}</strong><small>{item.owner}</small><em>{item.subtitle}</em>
-              </button>
-              {index<visibleProcess.length-1&&<div className={styles.flow}>↓</div>}
-            </div>)}
-          </div>
-          <div className={styles.cycle}>↺ Управленческие решения обновляют календарь и запускают следующий месячный цикл</div>
-        </div>}
-      </div>
-
-      <aside className={styles.detail}>
-        <p className={styles.eyebrow}>ВЫБРАННЫЙ ЭЛЕМЕНТ</p>
-        <h2>{selected.title}</h2>
-        <h3>Владелец</h3><p>{selected.owner}</p>
-        <h3>Назначение</h3><p>{selected.purpose}</p>
-        <h3>Правила и связи</h3><ul>{selected.rules.map(rule=><li key={rule}>{rule}</li>)}</ul>
-        {selected.docs?.map(doc=><a className={styles.open} href={doc.url} target="_blank" rel="noreferrer" key={doc.url}>{doc.label} ↗</a>)}
+          {!stage&&<div className={styles.returnFlow}>↺ Решения возвращаются к планированию месяца; пересмотр стратегии — к стратегии.</div>}
+        </div>
+        <div className={styles.legend}><span>◯ событие</span><span>▢ действие / подпроцесс ＋</span><span>◇ шлюз × — выбор</span><span>◇ шлюз ＋ — параллельные ветки</span></div>
+      </section>
+      <aside className={styles.panel} aria-live="polite">
+        <span className={styles.panelKicker}>ВЫБРАННЫЙ ЭЛЕМЕНТ</span><h2>{selected.title}</h2>
+        <dl><dt>Ответственный</dt><dd>{selected.role}</dd><dt>Что сделать</dt><dd>{selected.action}</dd><dt>Результат шага</dt><dd>{selected.output}</dd></dl>
+        {selected.branches&&<div className={styles.decision}>{selected.branches.map(b=><p key={b}>{b}</p>)}</div>}
+        {selected.docs?.length?<div className={styles.docList}><h3>Документы для шага</h3>{selected.docs.map(d=><div key={d.label}><a href={d.url} target="_blank" rel="noreferrer">{d.label} ↗</a>{d.status&&<small>{d.status}</small>}</div>)}</div>:<p className={styles.noDoc}>Отдельного документа для этого шага пока нет.</p>}
+        {!stage&&stages.some(s=>s.id===selected.id)&&<button className={styles.enter} onClick={()=>enter(selected.id)}>Раскрыть подпроцесс →</button>}
+        {stage&&<div className={styles.stepNav}><button disabled={steps.indexOf(selected)===0} onClick={()=>setSelectedId(steps[steps.indexOf(selected)-1].id)}>← Назад</button><button disabled={steps.indexOf(selected)===steps.length-1} onClick={()=>setSelectedId(steps[steps.indexOf(selected)+1].id)}>Следующее действие →</button></div>}
       </aside>
-    </section>
-
-    <footer className={styles.footer}>
-      <strong>Методология:</strong> расходы учитываются по дате расхода; месячный ДРР/ROMI — по дате оплаты; проект оценивается по полной сумме связанных расходов независимо от периода.
-    </footer>
+    </div>
+    <footer className={styles.footer}>Расходы: по дате расхода. Месячный ДРР/ROMI: по дате оплаты. Проект: по всем расходам его ID независимо от периода. Карта открывает документы; статус выполнения и согласования фиксируется в них.</footer>
   </main>;
 }
