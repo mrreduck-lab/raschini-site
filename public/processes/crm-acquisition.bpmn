@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?><bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_CRM_v13" targetNamespace="https://raschini.com/processes/crm"><bpmn:process id="CRMProcess" name="Привлечение и возврат клиента" isExecutable="false"><bpmn:startEvent id="start" name="Клиент в списке или задача"><bpmn:documentation>Управляющий
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:outgoing>main_f0</bpmn:outgoing></bpmn:startEvent><bpmn:subProcess id="prepare" name="Подготовить клиента и контакт"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f0</bpmn:incoming><bpmn:outgoing>main_f1</bpmn:outgoing><bpmn:startEvent id="p0" name="Начало подготовки"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:outgoing>prepare_f0</bpmn:outgoing></bpmn:startEvent><bpmn:userTask id="p1" name="Проверить карточку в 1С"><bpmn:documentation>Менеджер
+
+ФИО, телефон для SMS, дата рождения.
+Канал прихода и рекомендатель в поле «Источник».
+Закреплённый менеджер, предпочтения и комментарий.
+Проверить «Не беспокоить»: VIP пишет напрямую его менеджер.
+Ошибки контакта исправлять в 1С; затем проверить обновление CRM.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>prepare_f0</bpmn:incoming><bpmn:outgoing>prepare_f1</bpmn:outgoing></bpmn:userTask><bpmn:exclusiveGateway id="p2" name="Клиент распределён?"><bpmn:documentation>Управляющий
+
+Менеджер отвечает за актуальное закрепление в 1С.
+Управляющий распределяет клиентов без менеджера.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>prepare_f1</bpmn:incoming><bpmn:outgoing>prepare_f2</bpmn:outgoing><bpmn:outgoing>prepare_f3</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:userTask id="p3" name="Распределить клиента"><bpmn:documentation>Управляющий
+
+Пересчёт ежегодно с 1 по 31 января.
+Магазин — максимальная сумма покупок за 365 дней до последней покупки.
+Без покупок — по основному менеджеру; передача для реактивации через согласование CEO.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>prepare_f3</bpmn:incoming><bpmn:outgoing>prepare_f4</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="p4" name="Изучить историю и цель"><bpmn:documentation>Менеджер
+01 → подготовка
+Выбрать клиентский тег: день рождения, фокус управляющего или плановая задача.
+История покупок и диалогов, потребность, предложение и аргумент приглашения.
+Управляющий задаёт ежедневный план состоявшихся контактов.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>prepare_f2</bpmn:incoming><bpmn:incoming>prepare_f4</bpmn:incoming><bpmn:outgoing>prepare_f5</bpmn:outgoing></bpmn:userTask><bpmn:endEvent id="p5" name="Готов к коммуникации"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>prepare_f5</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="prepare_f0" sourceRef="p0" targetRef="p1"/><bpmn:sequenceFlow id="prepare_f1" sourceRef="p1" targetRef="p2"/><bpmn:sequenceFlow id="prepare_f2" sourceRef="p2" targetRef="p4" name="Да"/><bpmn:sequenceFlow id="prepare_f3" sourceRef="p2" targetRef="p3" name="Нет"/><bpmn:sequenceFlow id="prepare_f4" sourceRef="p3" targetRef="p4"/><bpmn:sequenceFlow id="prepare_f5" sourceRef="p4" targetRef="p5"/></bpmn:subProcess><bpmn:subProcess id="contact" name="Связаться и договориться"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f1</bpmn:incoming><bpmn:incoming>main_f6</bpmn:incoming><bpmn:incoming>main_f16</bpmn:incoming><bpmn:outgoing>main_f2</bpmn:outgoing><bpmn:startEvent id="c0" name="Контакт по задаче"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:outgoing>contact_f0</bpmn:outgoing></bpmn:startEvent><bpmn:userTask id="c1" name="Позвонить или написать"><bpmn:documentation>Менеджер
+02 Отправлена коммуникация
+Только корпоративные номера, подключённые к CRM.
+С личного телефона — только через приложение RetailCRM.
+Первый чат с клиентом — с корпоративного телефона.
+Не более 15 диалогов в день в каждом чате — ограничение регламента.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>contact_f0</bpmn:incoming><bpmn:outgoing>contact_f1</bpmn:outgoing></bpmn:userTask><bpmn:exclusiveGateway id="c2" name="Контакт состоялся?"><bpmn:documentation>Менеджер
+
+Звонок: дозвонились, диалог не менее 15 секунд.
+Чат: прочитан клиентом — две галочки.
+Прочтение и фактический ответ клиента фиксировать раздельно.
+В v13 успешный контакт включает прочтение, а этап 03 — ответ. Это разные факты; автоматическое правило 03 требует уточнения.
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>contact_f1</bpmn:incoming><bpmn:outgoing>contact_f2</bpmn:outgoing><bpmn:outgoing>contact_f3</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:userTask id="c3" name="Записать диалог и результат"><bpmn:documentation>Менеджер
+03 → 04 / 05 / 09
+Выявить потребность, сохранить историю и аргумент приглашения.
+Для этапа 03 проверить реальный ответ клиента.
+Согласовать дату встречи либо следующего звонка.
+При резком отказе — задача управляющему через 5 дней.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>contact_f2</bpmn:incoming><bpmn:outgoing>contact_f4</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="c4" name="Создать следующую задачу"><bpmn:documentation>Менеджер
+
+После каждой коммуникации поставить задачу со сроком.
+Название: «звонок» или «встреча»; цель — продать, пригласить или выявить потребность.
+Тег ответственного менеджера и комментарий с результатом.
+Просроченную задачу выполнить или перенести с пояснением.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>contact_f4</bpmn:incoming><bpmn:outgoing>contact_f5</bpmn:outgoing></bpmn:userTask><bpmn:endEvent id="c5" name="Согласованный результат"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>contact_f5</bpmn:incoming><bpmn:incoming>contact_f6</bpmn:incoming></bpmn:endEvent><bpmn:userTask id="c6" name="Запланировать повторную попытку"><bpmn:documentation>Менеджер
+
+Зафиксировать занято, недоступен, не прочитал.
+Создать задачу следующего контакта со сроком и целью.
+Не учитывать попытку как ответ клиента.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>contact_f3</bpmn:incoming><bpmn:outgoing>contact_f6</bpmn:outgoing></bpmn:userTask><bpmn:sequenceFlow id="contact_f0" sourceRef="c0" targetRef="c1"/><bpmn:sequenceFlow id="contact_f1" sourceRef="c1" targetRef="c2"/><bpmn:sequenceFlow id="contact_f2" sourceRef="c2" targetRef="c3" name="Да"/><bpmn:sequenceFlow id="contact_f3" sourceRef="c2" targetRef="c6" name="Нет"/><bpmn:sequenceFlow id="contact_f4" sourceRef="c3" targetRef="c4"/><bpmn:sequenceFlow id="contact_f5" sourceRef="c4" targetRef="c5"/><bpmn:sequenceFlow id="contact_f6" sourceRef="c6" targetRef="c5"/></bpmn:subProcess><bpmn:exclusiveGateway id="outcome" name="Результат диалога?"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f2</bpmn:incoming><bpmn:outgoing>main_f3</bpmn:outgoing><bpmn:outgoing>main_f4</bpmn:outgoing><bpmn:outgoing>main_f5</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:subProcess id="retry" name="Повторный контакт"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f4</bpmn:incoming><bpmn:incoming>main_f10</bpmn:incoming><bpmn:incoming>main_f12</bpmn:incoming><bpmn:outgoing>main_f6</bpmn:outgoing><bpmn:startEvent id="r0" name="Наступил срок задачи"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:outgoing>retry_f0</bpmn:outgoing></bpmn:startEvent><bpmn:userTask id="r1" name="Проверить задачу и историю"><bpmn:documentation>Менеджер
+
+Проверить договорённость, цель контакта и комментарии.
+При «Не беспокоить» соблюсти персональный контакт закреплённого менеджера.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>retry_f0</bpmn:incoming><bpmn:outgoing>retry_f1</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="r2" name="Позвонить / написать в срок"><bpmn:documentation>Менеджер
+04 Назначен звонок
+Дозвониться при занято / недоступен.
+При назначенном звонке договориться о встрече.
+Результат и новая задача обязательны; перенос — с комментарием.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>retry_f1</bpmn:incoming><bpmn:outgoing>retry_f2</bpmn:outgoing></bpmn:userTask><bpmn:endEvent id="r3" name="Вернуться к диалогу"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>retry_f2</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="retry_f0" sourceRef="r0" targetRef="r1"/><bpmn:sequenceFlow id="retry_f1" sourceRef="r1" targetRef="r2"/><bpmn:sequenceFlow id="retry_f2" sourceRef="r2" targetRef="r3"/></bpmn:subProcess><bpmn:subProcess id="visit" name="Встреча и примерка"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f3</bpmn:incoming><bpmn:outgoing>main_f7</bpmn:outgoing><bpmn:startEvent id="v0" name="Встреча согласована"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:outgoing>visit_f0</bpmn:outgoing></bpmn:startEvent><bpmn:userTask id="v1" name="Задача «встреча»"><bpmn:documentation>Менеджер
+05 Назначена встреча
+Указать дату, цель, тег менеджера и договорённость клиента.
+Подготовить товары, размеры и персональное предложение.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>visit_f0</bpmn:incoming><bpmn:outgoing>visit_f1</bpmn:outgoing></bpmn:userTask><bpmn:intermediateCatchEvent id="v2" name="За 2 часа до встречи"><bpmn:documentation>Менеджер
+
+Напомнить клиенту о сегодняшней встрече.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>visit_f1</bpmn:incoming><bpmn:outgoing>visit_f2</bpmn:outgoing><bpmn:timerEventDefinition id="v2_timer"><bpmn:timeDate xsi:type="bpmn:tFormalExpression">meetingAt - duration(&quot;PT2H&quot;)</bpmn:timeDate></bpmn:timerEventDefinition></bpmn:intermediateCatchEvent><bpmn:exclusiveGateway id="v3" name="Встреча состоялась?"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>visit_f2</bpmn:incoming><bpmn:outgoing>visit_f3</bpmn:outgoing><bpmn:outgoing>visit_f4</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:userTask id="v4" name="Провести примерку и продажу"><bpmn:documentation>Менеджер
+
+Провести встречу в бутике или удалённую примерку.
+Отдельно отметить состоявшуюся ранее назначенную встречу.
+Если покупки нет — вручную статус 06 и следующая задача.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>visit_f3</bpmn:incoming><bpmn:outgoing>visit_f5</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="v5" name="Согласовать перенос / причину"><bpmn:documentation>Менеджер
+
+Не считать несостоявшуюся встречу проведённой.
+Записать перенос, отказ или неявку и следующий срок.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>visit_f4</bpmn:incoming><bpmn:outgoing>visit_f6</bpmn:outgoing></bpmn:userTask><bpmn:endEvent id="v6" name="Зафиксировать результат"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>visit_f5</bpmn:incoming><bpmn:incoming>visit_f6</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="visit_f0" sourceRef="v0" targetRef="v1"/><bpmn:sequenceFlow id="visit_f1" sourceRef="v1" targetRef="v2"/><bpmn:sequenceFlow id="visit_f2" sourceRef="v2" targetRef="v3"/><bpmn:sequenceFlow id="visit_f3" sourceRef="v3" targetRef="v4" name="Да"/><bpmn:sequenceFlow id="visit_f4" sourceRef="v3" targetRef="v5" name="Нет"/><bpmn:sequenceFlow id="visit_f5" sourceRef="v4" targetRef="v6"/><bpmn:sequenceFlow id="visit_f6" sourceRef="v5" targetRef="v6"/></bpmn:subProcess><bpmn:subProcess id="refusal" name="Отказ / не клиент"><bpmn:documentation>Управляющий
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f5</bpmn:incoming><bpmn:outgoing>main_f11</bpmn:outgoing><bpmn:startEvent id="o0" name="Отказ / не клиент"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:outgoing>refusal_f0</bpmn:outgoing></bpmn:startEvent><bpmn:exclusiveGateway id="o1" name="Это не клиент?"><bpmn:documentation>Менеджер
+
+Проверить факт: никогда не покупал, уехал навсегда из зоны присутствия либо умер — формулировки v13.
+Отсутствие покупки у потенциального клиента само по себе не доказательство «не клиент». Критерий v13 требует уточнения.
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>refusal_f0</bpmn:incoming><bpmn:outgoing>refusal_f1</bpmn:outgoing><bpmn:outgoing>refusal_f2</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:userTask id="o2" name="Зафиксировать 10 и остановку"><bpmn:documentation>Менеджер
+10 Не клиент
+Вручную проставить 10 при подтверждённом основании.
+Остановить дальнейшие коммуникации.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>refusal_f1</bpmn:incoming><bpmn:outgoing>refusal_f7</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="o3" name="Зафиксировать отказ и задачу"><bpmn:documentation>Менеджер
+09 Отказался
+Вручную проставить 09.
+При резком отказе задача «Отказ — звонок управляющего», тег «Управляющий», дата +5 дней.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>refusal_f2</bpmn:incoming><bpmn:outgoing>refusal_f3</bpmn:outgoing><bpmn:outgoing>refusal_f5</bpmn:outgoing></bpmn:userTask><bpmn:intermediateCatchEvent id="o4" name="Через 5 дней"><bpmn:documentation>Управляющий
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>refusal_f3</bpmn:incoming><bpmn:outgoing>refusal_f4</bpmn:outgoing><bpmn:timerEventDefinition id="o4_timer"><bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P5D</bpmn:timeDuration></bpmn:timerEventDefinition></bpmn:intermediateCatchEvent><bpmn:userTask id="o5" name="Уточнить причину отказа"><bpmn:documentation>Управляющий
+
+Выслушать причину и сохранить обратную связь.
+Согласовать встречу или дату следующего звонка.
+Если продолжение нежелательно, зафиксировать это и не форсировать приглашение.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>refusal_f4</bpmn:incoming><bpmn:outgoing>refusal_f6</bpmn:outgoing></bpmn:userTask><bpmn:endEvent id="o6" name="Решение о продолжении"><bpmn:documentation>Управляющий
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>refusal_f5</bpmn:incoming><bpmn:incoming>refusal_f6</bpmn:incoming><bpmn:incoming>refusal_f7</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="refusal_f0" sourceRef="o0" targetRef="o1"/><bpmn:sequenceFlow id="refusal_f1" sourceRef="o1" targetRef="o2" name="Да"/><bpmn:sequenceFlow id="refusal_f2" sourceRef="o1" targetRef="o3" name="Нет"/><bpmn:sequenceFlow id="refusal_f3" sourceRef="o3" targetRef="o4" name="Резкий отказ"/><bpmn:sequenceFlow id="refusal_f4" sourceRef="o4" targetRef="o5"/><bpmn:sequenceFlow id="refusal_f5" sourceRef="o3" targetRef="o6" name="Иной отказ: решение управляющего"/><bpmn:sequenceFlow id="refusal_f6" sourceRef="o5" targetRef="o6"/><bpmn:sequenceFlow id="refusal_f7" sourceRef="o2" targetRef="o6" name="Остановить"/></bpmn:subProcess><bpmn:exclusiveGateway id="stopChoice" name="Продолжать контакт?"><bpmn:documentation>Управляющий
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f11</bpmn:incoming><bpmn:outgoing>main_f12</bpmn:outgoing><bpmn:outgoing>main_f13</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:exclusiveGateway id="visitChoice" name="Купил?"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f7</bpmn:incoming><bpmn:outgoing>main_f8</bpmn:outgoing><bpmn:outgoing>main_f9</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:userTask id="noSale" name="Потребность и новая задача"><bpmn:documentation>Менеджер
+
+Записать причины отсутствия покупки и потребность.
+При состоявшемся визите вручную поставить 06.
+Согласовать следующую встречу или звонок; указать срок, цель и тег менеджера.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f9</bpmn:incoming><bpmn:outgoing>main_f10</bpmn:outgoing></bpmn:userTask><bpmn:subProcess id="sale" name="Продажа и проверка привлечения"><bpmn:documentation>1С / RetailCRM
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f8</bpmn:incoming><bpmn:outgoing>main_f14</bpmn:outgoing><bpmn:startEvent id="s0" name="Клиент покупает"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:outgoing>sale_f0</bpmn:outgoing></bpmn:startEvent><bpmn:userTask id="s1" name="Оформить продажу в РМК 1С"><bpmn:documentation>Менеджер
+
+Подтверждение продажи SMS-кодом клиента.
+Внести продавцов и проценты распределения чека.
+Проверить актуального закреплённого менеджера.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>sale_f0</bpmn:incoming><bpmn:outgoing>sale_f1</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="s2" name="Проверить оплату в 1С"><bpmn:documentation>1С / RetailCRM
+07 Сделана продажа
+Оплата в 1С — основание этапа 07.
+Сверить клиента, чек, бутик и историю контакта.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>sale_f1</bpmn:incoming><bpmn:outgoing>sale_f2</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="s3" name="Проверить CRM-привлечение"><bpmn:documentation>Управляющий
+
+Ответ клиента на звонок или в переписке за 12 часов–14 дней до покупки.
+История диалога с усилиями по привлечению и аргументом приглашения обязательна.
+Основной менеджер получает +20% вознаграждения по чеку в своём бутике, независимо от наличия в чеке.
+Выездная продажа — по пп.1–8, без п.9.
+Карта показывает основание проверки; выплаты и подтверждение выполняются ответственными в учётной системе.
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>sale_f2</bpmn:incoming><bpmn:outgoing>sale_f3</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="s4" name="Проверить правило −5%"><bpmn:documentation>Управляющий
+
+Для старых клиентов проверить отсутствие коммуникаций менее чем за 45 дней по условиям п.8.
+До автоматизации согласовать трактовку п.9: п.8 задаёт окно 12 ч–14 дней, а п.9 ссылается на 45 дней.
+Не заменять утверждённый расчёт произвольной интерпретацией.
+Правило п.9 требует согласования границ и квалифицирующих контактов; карта не рассчитывает демотивацию.
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>sale_f3</bpmn:incoming><bpmn:outgoing>sale_f4</bpmn:outgoing></bpmn:userTask><bpmn:endEvent id="s5" name="Продажа подтверждена"><bpmn:documentation>1С / RetailCRM
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>sale_f4</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="sale_f0" sourceRef="s0" targetRef="s1"/><bpmn:sequenceFlow id="sale_f1" sourceRef="s1" targetRef="s2"/><bpmn:sequenceFlow id="sale_f2" sourceRef="s2" targetRef="s3"/><bpmn:sequenceFlow id="sale_f3" sourceRef="s3" targetRef="s4"/><bpmn:sequenceFlow id="sale_f4" sourceRef="s4" targetRef="s5"/></bpmn:subProcess><bpmn:subProcess id="followup" name="Переделка и обратная связь"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f14</bpmn:incoming><bpmn:outgoing>main_f15</bpmn:outgoing><bpmn:startEvent id="a0" name="После покупки"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:outgoing>followup_f0</bpmn:outgoing></bpmn:startEvent><bpmn:exclusiveGateway id="a1" name="Нужна переделка?"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>followup_f0</bpmn:incoming><bpmn:outgoing>followup_f1</bpmn:outgoing><bpmn:outgoing>followup_f2</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:userTask id="a2" name="Задача «На переделке»"><bpmn:documentation>Менеджер
+071 На переделке
+Задача на себя с датой готовности.
+При открытой задаче — этап 071.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>followup_f1</bpmn:incoming><bpmn:outgoing>followup_f3</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="a3" name="Выдать вещи и закрыть задачу"><bpmn:documentation>Менеджер
+
+Подтвердить выдачу клиенту и закрыть «На переделке».
+Назначить обратную связь через 14 дней.
+В строке 071 v13 при закрытии снова указан 071. Переход после закрытия требуется согласовать; 08 только после реальной обратной связи.
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>followup_f3</bpmn:incoming><bpmn:outgoing>followup_f4</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="a4" name="Задача обратной связи"><bpmn:documentation>Менеджер
+
+Без переделки — задача через 14 дней после покупки.
+С переделкой — после выдачи вещей, как описано в v13.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>followup_f2</bpmn:incoming><bpmn:incoming>followup_f4</bpmn:incoming><bpmn:outgoing>followup_f5</bpmn:outgoing></bpmn:userTask><bpmn:intermediateCatchEvent id="a5" name="Ожидать 14 дней"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>followup_f5</bpmn:incoming><bpmn:outgoing>followup_f6</bpmn:outgoing><bpmn:timerEventDefinition id="a5_timer"><bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P14D</bpmn:timeDuration></bpmn:timerEventDefinition></bpmn:intermediateCatchEvent><bpmn:userTask id="a6" name="Узнать, как одежда"><bpmn:documentation>Менеджер
+08 Получена обратная связь
+Получить и внести обратную связь в заметки.
+Закрыть задачу обратной связи после контакта.
+Уточнить «Файл ожиданий», новую потребность и дату примерки / звонка.
+Если нет ответа — перенос с комментарием; не ставить 08 как полученную обратную связь.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>followup_f6</bpmn:incoming><bpmn:outgoing>followup_f7</bpmn:outgoing></bpmn:userTask><bpmn:endEvent id="a7" name="Новая задача согласована"><bpmn:documentation>Менеджер
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>followup_f7</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="followup_f0" sourceRef="a0" targetRef="a1"/><bpmn:sequenceFlow id="followup_f1" sourceRef="a1" targetRef="a2" name="Да"/><bpmn:sequenceFlow id="followup_f2" sourceRef="a1" targetRef="a4" name="Нет"/><bpmn:sequenceFlow id="followup_f3" sourceRef="a2" targetRef="a3" name="Готово"/><bpmn:sequenceFlow id="followup_f4" sourceRef="a3" targetRef="a4" name="После выдачи"/><bpmn:sequenceFlow id="followup_f5" sourceRef="a4" targetRef="a5"/><bpmn:sequenceFlow id="followup_f6" sourceRef="a5" targetRef="a6"/><bpmn:sequenceFlow id="followup_f7" sourceRef="a6" targetRef="a7"/></bpmn:subProcess><bpmn:userTask id="next" name="Следующая потребность и контакт"><bpmn:documentation>Менеджер
+
+Уточнить «Файл ожиданий».
+Согласовать дату следующего звонка или примерки.
+Создать задачу с целью, сроком и тегом ответственного.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f15</bpmn:incoming><bpmn:outgoing>main_f16</bpmn:outgoing></bpmn:userTask><bpmn:endEvent id="stop" name="Коммуникации остановлены"><bpmn:documentation>Управляющий
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>main_f13</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="main_f0" sourceRef="start" targetRef="prepare"/><bpmn:sequenceFlow id="main_f1" sourceRef="prepare" targetRef="contact"/><bpmn:sequenceFlow id="main_f2" sourceRef="contact" targetRef="outcome"/><bpmn:sequenceFlow id="main_f3" sourceRef="outcome" targetRef="visit" name="Встреча согласована"/><bpmn:sequenceFlow id="main_f4" sourceRef="outcome" targetRef="retry" name="Недозвон / позже"/><bpmn:sequenceFlow id="main_f5" sourceRef="outcome" targetRef="refusal" name="Отказ / не клиент"/><bpmn:sequenceFlow id="main_f6" sourceRef="retry" targetRef="contact" name="В срок новой задачи"/><bpmn:sequenceFlow id="main_f7" sourceRef="visit" targetRef="visitChoice"/><bpmn:sequenceFlow id="main_f8" sourceRef="visitChoice" targetRef="sale" name="Да"/><bpmn:sequenceFlow id="main_f9" sourceRef="visitChoice" targetRef="noSale" name="Нет / не пришёл"/><bpmn:sequenceFlow id="main_f10" sourceRef="noSale" targetRef="retry"/><bpmn:sequenceFlow id="main_f11" sourceRef="refusal" targetRef="stopChoice"/><bpmn:sequenceFlow id="main_f12" sourceRef="stopChoice" targetRef="retry" name="Продолжать"/><bpmn:sequenceFlow id="main_f13" sourceRef="stopChoice" targetRef="stop" name="Остановить"/><bpmn:sequenceFlow id="main_f14" sourceRef="sale" targetRef="followup"/><bpmn:sequenceFlow id="main_f15" sourceRef="followup" targetRef="next"/><bpmn:sequenceFlow id="main_f16" sourceRef="next" targetRef="contact" name="Новый цикл"/></bpmn:process><bpmn:process id="ControlProcess" name="Контроль управляющего" isExecutable="false"><bpmn:startEvent id="k0" name="Конец рабочего дня"><bpmn:documentation>Управляющий
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:outgoing>control_f0</bpmn:outgoing></bpmn:startEvent><bpmn:userTask id="k1" name="Проверить интенсивность"><bpmn:documentation>Управляющий
+
+План и факт состоявшихся контактов.
+Отвеченные звонки не менее 15 сек; прочитанные чаты — отдельно от ответов.
+Просроченные задачи, следующая задача после контакта, сроки и комментарии.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>control_f0</bpmn:incoming><bpmn:outgoing>control_f1</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="k2" name="Сверить встречи и продажи"><bpmn:documentation>Управляющий
+
+Назначено и проведено ранее назначенных встреч.
+Продажи и суммы по CRM сверены с 1С.
+История приглашений доступна для проверки.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>control_f1</bpmn:incoming><bpmn:outgoing>control_f2</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="k3" name="Итог в TG Retail Raschini"><bpmn:documentation>Управляющий
+
+Успешных контактов — количество.
+Назначено встреч — количество.
+Продажи по CRM — сумма.
+В отсутствие управляющего итог вносит ответственный менеджер.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>control_f2</bpmn:incoming><bpmn:outgoing>control_f3</bpmn:outgoing></bpmn:userTask><bpmn:userTask id="k4" name="Ежемесячный план и отчёт"><bpmn:documentation>Управляющий
+
+Воронка продаж и коммуникаций по этапам приложения 1.
+Файл ожиданий: запланировано на начало месяца, добавлено внутри месяца, купил, перенёс, отказ.
+Отдельные отчёты СП / Dream House / Архангельское Outlet и итоги.
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>control_f3</bpmn:incoming><bpmn:outgoing>control_f4</bpmn:outgoing></bpmn:userTask><bpmn:endEvent id="k5" name="Контроль завершён"><bpmn:documentation>Управляющий
+
+
+
+Источник: https://docs.google.com/document/d/1nsWy-kkybi8KUBRT2BiBrBix0oAtYJUKNtzc0mgCT-E/edit</bpmn:documentation><bpmn:incoming>control_f4</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id="control_f0" sourceRef="k0" targetRef="k1"/><bpmn:sequenceFlow id="control_f1" sourceRef="k1" targetRef="k2"/><bpmn:sequenceFlow id="control_f2" sourceRef="k2" targetRef="k3"/><bpmn:sequenceFlow id="control_f3" sourceRef="k3" targetRef="k4" name="Закрытие месяца"/><bpmn:sequenceFlow id="control_f4" sourceRef="k4" targetRef="k5"/></bpmn:process><bpmndi:BPMNDiagram id="diagram_main"><bpmndi:BPMNPlane id="plane_main" bpmnElement="CRMProcess"><bpmndi:BPMNShape id="start_di" bpmnElement="start"><dc:Bounds x="102" y="90" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="prepare_di" bpmnElement="prepare" isExpanded="false"><dc:Bounds x="330" y="250" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="contact_di" bpmnElement="contact" isExpanded="false"><dc:Bounds x="330" y="410" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="outcome_di" bpmnElement="outcome"><dc:Bounds x="330" y="570" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="retry_di" bpmnElement="retry" isExpanded="false"><dc:Bounds x="40" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="visit_di" bpmnElement="visit" isExpanded="false"><dc:Bounds x="330" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="refusal_di" bpmnElement="refusal" isExpanded="false"><dc:Bounds x="620" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="stopChoice_di" bpmnElement="stopChoice"><dc:Bounds x="620" y="890" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="visitChoice_di" bpmnElement="visitChoice"><dc:Bounds x="330" y="890" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="noSale_di" bpmnElement="noSale"><dc:Bounds x="40" y="1050" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="sale_di" bpmnElement="sale" isExpanded="false"><dc:Bounds x="330" y="1050" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="followup_di" bpmnElement="followup" isExpanded="false"><dc:Bounds x="330" y="1210" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="next_di" bpmnElement="next"><dc:Bounds x="330" y="1370" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="stop_di" bpmnElement="stop"><dc:Bounds x="682" y="1210" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNEdge id="main_f0_di" bpmnElement="main_f0"><di:waypoint x="150" y="190"/><di:waypoint x="150" y="220"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="250"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f1_di" bpmnElement="main_f1"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="410"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f2_di" bpmnElement="main_f2"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="570"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f3_di" bpmnElement="main_f3"><di:waypoint x="440" y="670"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f4_di" bpmnElement="main_f4"><di:waypoint x="440" y="670"/><di:waypoint x="440" y="700"/><di:waypoint x="150" y="700"/><di:waypoint x="150" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f5_di" bpmnElement="main_f5"><di:waypoint x="440" y="670"/><di:waypoint x="440" y="700"/><di:waypoint x="730" y="700"/><di:waypoint x="730" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f6_di" bpmnElement="main_f6"><di:waypoint x="40" y="780"/><di:waypoint x="24" y="780"/><di:waypoint x="24" y="460"/><di:waypoint x="330" y="460"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f7_di" bpmnElement="main_f7"><di:waypoint x="440" y="830"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f8_di" bpmnElement="main_f8"><di:waypoint x="440" y="990"/><di:waypoint x="440" y="1020"/><di:waypoint x="440" y="1020"/><di:waypoint x="440" y="1050"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f9_di" bpmnElement="main_f9"><di:waypoint x="440" y="990"/><di:waypoint x="440" y="1020"/><di:waypoint x="150" y="1020"/><di:waypoint x="150" y="1050"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f10_di" bpmnElement="main_f10"><di:waypoint x="40" y="1100"/><di:waypoint x="24" y="1100"/><di:waypoint x="24" y="780"/><di:waypoint x="40" y="780"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f11_di" bpmnElement="main_f11"><di:waypoint x="730" y="830"/><di:waypoint x="730" y="860"/><di:waypoint x="730" y="860"/><di:waypoint x="730" y="890"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f12_di" bpmnElement="main_f12"><di:waypoint x="620" y="940"/><di:waypoint x="12" y="940"/><di:waypoint x="12" y="780"/><di:waypoint x="40" y="780"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f13_di" bpmnElement="main_f13"><di:waypoint x="730" y="990"/><di:waypoint x="730" y="1100"/><di:waypoint x="730" y="1100"/><di:waypoint x="730" y="1210"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f14_di" bpmnElement="main_f14"><di:waypoint x="440" y="1150"/><di:waypoint x="440" y="1180"/><di:waypoint x="440" y="1180"/><di:waypoint x="440" y="1210"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f15_di" bpmnElement="main_f15"><di:waypoint x="440" y="1310"/><di:waypoint x="440" y="1340"/><di:waypoint x="440" y="1340"/><di:waypoint x="440" y="1370"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="main_f16_di" bpmnElement="main_f16"><di:waypoint x="330" y="1420"/><di:waypoint x="12" y="1420"/><di:waypoint x="12" y="460"/><di:waypoint x="330" y="460"/></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram><bpmndi:BPMNDiagram id="diagram_prepare"><bpmndi:BPMNPlane id="plane_prepare" bpmnElement="prepare"><bpmndi:BPMNShape id="p0_di" bpmnElement="p0"><dc:Bounds x="392" y="90" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="p1_di" bpmnElement="p1"><dc:Bounds x="330" y="250" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="p2_di" bpmnElement="p2"><dc:Bounds x="330" y="410" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="p3_di" bpmnElement="p3"><dc:Bounds x="40" y="570" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="p4_di" bpmnElement="p4"><dc:Bounds x="330" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="p5_di" bpmnElement="p5"><dc:Bounds x="392" y="890" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNEdge id="prepare_f0_di" bpmnElement="prepare_f0"><di:waypoint x="440" y="190"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="250"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="prepare_f1_di" bpmnElement="prepare_f1"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="410"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="prepare_f2_di" bpmnElement="prepare_f2"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="620"/><di:waypoint x="440" y="620"/><di:waypoint x="440" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="prepare_f3_di" bpmnElement="prepare_f3"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="540"/><di:waypoint x="150" y="540"/><di:waypoint x="150" y="570"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="prepare_f4_di" bpmnElement="prepare_f4"><di:waypoint x="150" y="670"/><di:waypoint x="150" y="700"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="prepare_f5_di" bpmnElement="prepare_f5"><di:waypoint x="440" y="830"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram><bpmndi:BPMNDiagram id="diagram_contact"><bpmndi:BPMNPlane id="plane_contact" bpmnElement="contact"><bpmndi:BPMNShape id="c0_di" bpmnElement="c0"><dc:Bounds x="392" y="90" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="c1_di" bpmnElement="c1"><dc:Bounds x="330" y="250" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="c2_di" bpmnElement="c2"><dc:Bounds x="330" y="410" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="c3_di" bpmnElement="c3"><dc:Bounds x="330" y="570" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="c4_di" bpmnElement="c4"><dc:Bounds x="330" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="c5_di" bpmnElement="c5"><dc:Bounds x="392" y="890" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="c6_di" bpmnElement="c6"><dc:Bounds x="40" y="570" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNEdge id="contact_f0_di" bpmnElement="contact_f0"><di:waypoint x="440" y="190"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="250"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="contact_f1_di" bpmnElement="contact_f1"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="410"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="contact_f2_di" bpmnElement="contact_f2"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="570"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="contact_f3_di" bpmnElement="contact_f3"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="540"/><di:waypoint x="150" y="540"/><di:waypoint x="150" y="570"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="contact_f4_di" bpmnElement="contact_f4"><di:waypoint x="440" y="670"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="contact_f5_di" bpmnElement="contact_f5"><di:waypoint x="440" y="830"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="contact_f6_di" bpmnElement="contact_f6"><di:waypoint x="150" y="670"/><di:waypoint x="150" y="780"/><di:waypoint x="440" y="780"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram><bpmndi:BPMNDiagram id="diagram_retry"><bpmndi:BPMNPlane id="plane_retry" bpmnElement="retry"><bpmndi:BPMNShape id="r0_di" bpmnElement="r0"><dc:Bounds x="392" y="90" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="r1_di" bpmnElement="r1"><dc:Bounds x="330" y="250" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="r2_di" bpmnElement="r2"><dc:Bounds x="330" y="410" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="r3_di" bpmnElement="r3"><dc:Bounds x="392" y="570" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNEdge id="retry_f0_di" bpmnElement="retry_f0"><di:waypoint x="440" y="190"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="250"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="retry_f1_di" bpmnElement="retry_f1"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="410"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="retry_f2_di" bpmnElement="retry_f2"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="570"/></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram><bpmndi:BPMNDiagram id="diagram_visit"><bpmndi:BPMNPlane id="plane_visit" bpmnElement="visit"><bpmndi:BPMNShape id="v0_di" bpmnElement="v0"><dc:Bounds x="392" y="90" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="v1_di" bpmnElement="v1"><dc:Bounds x="330" y="250" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="v2_di" bpmnElement="v2"><dc:Bounds x="392" y="410" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="v3_di" bpmnElement="v3"><dc:Bounds x="330" y="570" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="v4_di" bpmnElement="v4"><dc:Bounds x="330" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="v5_di" bpmnElement="v5"><dc:Bounds x="40" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="v6_di" bpmnElement="v6"><dc:Bounds x="392" y="890" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNEdge id="visit_f0_di" bpmnElement="visit_f0"><di:waypoint x="440" y="190"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="250"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="visit_f1_di" bpmnElement="visit_f1"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="410"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="visit_f2_di" bpmnElement="visit_f2"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="570"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="visit_f3_di" bpmnElement="visit_f3"><di:waypoint x="440" y="670"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="visit_f4_di" bpmnElement="visit_f4"><di:waypoint x="440" y="670"/><di:waypoint x="440" y="700"/><di:waypoint x="150" y="700"/><di:waypoint x="150" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="visit_f5_di" bpmnElement="visit_f5"><di:waypoint x="440" y="830"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="visit_f6_di" bpmnElement="visit_f6"><di:waypoint x="150" y="830"/><di:waypoint x="150" y="860"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram><bpmndi:BPMNDiagram id="diagram_refusal"><bpmndi:BPMNPlane id="plane_refusal" bpmnElement="refusal"><bpmndi:BPMNShape id="o0_di" bpmnElement="o0"><dc:Bounds x="392" y="90" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="o1_di" bpmnElement="o1"><dc:Bounds x="330" y="250" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="o2_di" bpmnElement="o2"><dc:Bounds x="620" y="410" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="o3_di" bpmnElement="o3"><dc:Bounds x="330" y="410" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="o4_di" bpmnElement="o4"><dc:Bounds x="392" y="570" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="o5_di" bpmnElement="o5"><dc:Bounds x="330" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="o6_di" bpmnElement="o6"><dc:Bounds x="392" y="890" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNEdge id="refusal_f0_di" bpmnElement="refusal_f0"><di:waypoint x="440" y="190"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="250"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="refusal_f1_di" bpmnElement="refusal_f1"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="380"/><di:waypoint x="730" y="380"/><di:waypoint x="730" y="410"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="refusal_f2_di" bpmnElement="refusal_f2"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="410"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="refusal_f3_di" bpmnElement="refusal_f3"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="570"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="refusal_f4_di" bpmnElement="refusal_f4"><di:waypoint x="440" y="670"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="refusal_f5_di" bpmnElement="refusal_f5"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="refusal_f6_di" bpmnElement="refusal_f6"><di:waypoint x="440" y="830"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="refusal_f7_di" bpmnElement="refusal_f7"><di:waypoint x="730" y="510"/><di:waypoint x="730" y="700"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram><bpmndi:BPMNDiagram id="diagram_sale"><bpmndi:BPMNPlane id="plane_sale" bpmnElement="sale"><bpmndi:BPMNShape id="s0_di" bpmnElement="s0"><dc:Bounds x="392" y="90" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="s1_di" bpmnElement="s1"><dc:Bounds x="330" y="250" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="s2_di" bpmnElement="s2"><dc:Bounds x="330" y="410" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="s3_di" bpmnElement="s3"><dc:Bounds x="330" y="570" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="s4_di" bpmnElement="s4"><dc:Bounds x="330" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="s5_di" bpmnElement="s5"><dc:Bounds x="392" y="890" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNEdge id="sale_f0_di" bpmnElement="sale_f0"><di:waypoint x="440" y="190"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="250"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="sale_f1_di" bpmnElement="sale_f1"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="410"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="sale_f2_di" bpmnElement="sale_f2"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="570"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="sale_f3_di" bpmnElement="sale_f3"><di:waypoint x="440" y="670"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="sale_f4_di" bpmnElement="sale_f4"><di:waypoint x="440" y="830"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram><bpmndi:BPMNDiagram id="diagram_followup"><bpmndi:BPMNPlane id="plane_followup" bpmnElement="followup"><bpmndi:BPMNShape id="a0_di" bpmnElement="a0"><dc:Bounds x="392" y="90" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="a1_di" bpmnElement="a1"><dc:Bounds x="330" y="250" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="a2_di" bpmnElement="a2"><dc:Bounds x="40" y="410" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="a3_di" bpmnElement="a3"><dc:Bounds x="40" y="570" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="a4_di" bpmnElement="a4"><dc:Bounds x="330" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="a5_di" bpmnElement="a5"><dc:Bounds x="392" y="890" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="a6_di" bpmnElement="a6"><dc:Bounds x="330" y="1050" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="a7_di" bpmnElement="a7"><dc:Bounds x="392" y="1210" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNEdge id="followup_f0_di" bpmnElement="followup_f0"><di:waypoint x="440" y="190"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="250"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="followup_f1_di" bpmnElement="followup_f1"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="380"/><di:waypoint x="150" y="380"/><di:waypoint x="150" y="410"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="followup_f2_di" bpmnElement="followup_f2"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="followup_f3_di" bpmnElement="followup_f3"><di:waypoint x="150" y="510"/><di:waypoint x="150" y="540"/><di:waypoint x="150" y="540"/><di:waypoint x="150" y="570"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="followup_f4_di" bpmnElement="followup_f4"><di:waypoint x="150" y="670"/><di:waypoint x="150" y="700"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="followup_f5_di" bpmnElement="followup_f5"><di:waypoint x="440" y="830"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="followup_f6_di" bpmnElement="followup_f6"><di:waypoint x="440" y="990"/><di:waypoint x="440" y="1020"/><di:waypoint x="440" y="1020"/><di:waypoint x="440" y="1050"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="followup_f7_di" bpmnElement="followup_f7"><di:waypoint x="440" y="1150"/><di:waypoint x="440" y="1180"/><di:waypoint x="440" y="1180"/><di:waypoint x="440" y="1210"/></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram><bpmndi:BPMNDiagram id="diagram_control"><bpmndi:BPMNPlane id="plane_control" bpmnElement="ControlProcess"><bpmndi:BPMNShape id="k0_di" bpmnElement="k0"><dc:Bounds x="392" y="90" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="k1_di" bpmnElement="k1"><dc:Bounds x="330" y="250" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="k2_di" bpmnElement="k2"><dc:Bounds x="330" y="410" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="k3_di" bpmnElement="k3"><dc:Bounds x="330" y="570" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="k4_di" bpmnElement="k4"><dc:Bounds x="330" y="730" width="220" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNShape id="k5_di" bpmnElement="k5"><dc:Bounds x="392" y="890" width="96" height="100"/></bpmndi:BPMNShape><bpmndi:BPMNEdge id="control_f0_di" bpmnElement="control_f0"><di:waypoint x="440" y="190"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="220"/><di:waypoint x="440" y="250"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="control_f1_di" bpmnElement="control_f1"><di:waypoint x="440" y="350"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="380"/><di:waypoint x="440" y="410"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="control_f2_di" bpmnElement="control_f2"><di:waypoint x="440" y="510"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="540"/><di:waypoint x="440" y="570"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="control_f3_di" bpmnElement="control_f3"><di:waypoint x="440" y="670"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="700"/><di:waypoint x="440" y="730"/></bpmndi:BPMNEdge><bpmndi:BPMNEdge id="control_f4_di" bpmnElement="control_f4"><di:waypoint x="440" y="830"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="860"/><di:waypoint x="440" y="890"/></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>

@@ -89,7 +89,7 @@ export default function MarketingProcessesPage() {
       <p className={styles.kicker}>RASCHINI / ПРОЦЕССЫ</p>
       <h1>Управление маркетингом</h1>
       <p>Идите по схеме: откройте подпроцесс, выберите действие и перейдите к его документу.</p>
-      <nav className={styles.links}><a href={folder} target="_blank" rel="noreferrer">Папка документов ↗</a><a href={rules} target="_blank" rel="noreferrer">Регламент ↗</a><a href="/processes/marketing-management.bpmn" download>Исходная BPMN 2.0 ↧</a></nav>
+      <nav className={styles.links}><a href="/processes/crm">Привлечение клиентов в CRM →</a><a href={folder} target="_blank" rel="noreferrer">Папка документов ↗</a><a href={rules} target="_blank" rel="noreferrer">Регламент ↗</a><a href="/processes/marketing-management.bpmn" download>Исходная BPMN 2.0 ↧</a></nav>
     </header>
     <div className={styles.breadcrumb}><button onClick={leave} disabled={!stage}>Общий процесс</button>{stage&&<><span>›</span><strong>{stage.title}</strong></>}</div>
     <div className={styles.layout}>
