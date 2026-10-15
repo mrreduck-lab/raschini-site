@@ -1,0 +1,57 @@
+name: Prepare RASCHINI Runner on MG Bot VPS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: raschini-stage-runner-bootstrap
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: Read-only VPS preflight (MG Bot unaffected)
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: SSH to the existing MG Bot VPS, no changes
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: 159.194.216.114
+          username: ${{ secrets.VPS_USER || secrets.DEPLOY_USER }}
+          key: ${{ secrets.VPS_SSH_KEY || secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || secrets.DEPLOY_PORT || 22 }}
+          command_timeout: 3m
+          script: |
+            set -eu
+            echo "RUNNER_TARGET=MG_BOT_VPS"
+            test "$(uname -s)" = Linux
+            echo "ARCH=$(uname -m)"
+            echo "CPUS=$(getconf _NPROCESSORS_ONLN)"
+            free -m | awk '/^Mem:/{print "TOTAL_RAM_MIB="$2; print "AVAILABLE_RAM_MIB="$7}'
+            df -Pk /opt | awk 'END {print "AVAILABLE_OPT_KIB="$4}'
+            echo "MG_BOT_DIRECTORY=$([ -d /opt/raschini-retailcrm-chat-bot ] && echo present || echo missing)"
+            if command -v pm2 >/dev/null 2>&1; then
+              echo "PM2_AVAILABLE=yes"
+              pm2 pid mg-bot 2>/dev/null | awk '/^[0-9]+$/{print "MG_BOT_PM2_PROCESS=" ($1>0?"running":"not_running")}'
+            else
+              echo "PM2_AVAILABLE=no"
+            fi
+            if id raschini-runner >/dev/null 2>&1; then
+              echo "DEDICATED_RUNNER_USER=present"
+            else
+              echo "DEDICATED_RUNNER_USER=not_created"
+            fi
+            if [ -d /opt/raschini-actions-runner ]; then
+              echo "RUNNER_INSTALL_DIRECTORY=present"
+            else
+              echo "RUNNER_INSTALL_DIRECTORY=not_created"
+            fi
+            if [ "$(uname -m)" = x86_64 ]; then
+              echo "HOST_ARCH_COMPATIBILITY=pass"
+            else
+              echo "HOST_ARCH_COMPATIBILITY=needs_review"
+            fi
+            echo "READ_ONLY_VPS_PREFLIGHT=pass"
