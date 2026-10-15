@@ -16,6 +16,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
+      - name: Verify SSH configuration without printing secrets
+        shell: bash
+        env:
+          VPS_SSH_USERNAME: ${{ secrets.VPS_USER || secrets.DEPLOY_USER }}
+          VPS_SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY || secrets.DEPLOY_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "$VPS_SSH_USERNAME" ] || [ -z "$VPS_SSH_PRIVATE_KEY" ]; then
+            echo "::error title=Missing VPS SSH secrets::Set repository Actions secrets VPS_USER and VPS_SSH_KEY for this repo before probing the MG Bot server. Do not paste private keys in chat."
+            exit 1
+          fi
+          echo "VPS_SSH_CONFIGURATION=present"
       - name: SSH to the existing MG Bot VPS, no changes
         uses: appleboy/ssh-action@v1.2.2
         with:
