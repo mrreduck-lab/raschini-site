@@ -30,7 +30,7 @@ test "$disk_kib" -ge 3145728 || die "MG Bot safety: /opt free disk < 3 GiB"
 if test "$cpus" -eq 1; then
   test "$mem_kib" -ge 1048576 || die "One vCPU needs at least 1 GiB free RAM to protect MG Bot"
   load_1m="$(awk '{print $1}' /proc/loadavg)"
-  awk -v load="$load_1m" 'BEGIN {exit (load < 0.85 ? 0 : 1)}' \
+  awk -v current_load="$load_1m" 'BEGIN {exit (current_load < 0.85 ? 0 : 1)}' \
     || die "MG Bot CPU load too high for shared runner (1-minute load: $load_1m)"
   echo "ONE_CORE_MODE=enabled CPUQuota=25% MemoryMax=512M"
 elif test "$cpus" -lt 1; then
